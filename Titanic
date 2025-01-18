@@ -1,1 +1,1539 @@
-{"metadata":{"kernelspec":{"language":"python","display_name":"Python 3","name":"python3"},"language_info":{"name":"python","version":"3.10.12","mimetype":"text/x-python","codemirror_mode":{"name":"ipython","version":3},"pygments_lexer":"ipython3","nbconvert_exporter":"python","file_extension":".py"},"kaggle":{"accelerator":"none","dataSources":[{"sourceId":90741,"databundleVersionId":10576436,"sourceType":"competition"}],"dockerImageVersionId":30839,"isInternetEnabled":false,"language":"python","sourceType":"notebook","isGpuEnabled":false}},"nbformat_minor":4,"nbformat":4,"cells":[{"cell_type":"code","source":"# This Python 3 environment comes with many helpful analytics libraries installed\n# It is defined by the kaggle/python Docker image: https://github.com/kaggle/docker-python\n# For example, here's several helpful packages to load\n\nimport numpy as np # linear algebra\nimport pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)\n\n# Input data files are available in the read-only \"../input/\" directory\n# For example, running this (by clicking run or pressing Shift+Enter) will list all files under the input directory\n\nimport os\nfor dirname, _, filenames in os.walk('/kaggle/input'):\n    for filename in filenames:\n        print(os.path.join(dirname, filename))\n\n# You can write up to 20GB to the current directory (/kaggle/working/) that gets preserved as output when you create a version using \"Save & Run All\" \n# You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session","metadata":{"_uuid":"8f2839f25d086af736a60e9eeb907d3b93b6e0e5","_cell_guid":"b1076dfc-b9ad-4769-8c92-a6c4dae69d19","trusted":true,"execution":{"iopub.status.busy":"2025-01-17T03:02:51.999844Z","iopub.execute_input":"2025-01-17T03:02:52.000191Z","iopub.status.idle":"2025-01-17T03:02:53.382456Z","shell.execute_reply.started":"2025-01-17T03:02:52.000148Z","shell.execute_reply":"2025-01-17T03:02:53.381264Z"}},"outputs":[{"name":"stdout","text":"/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/train.csv\n/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/test.csv\n/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/gender_submission.csv\n","output_type":"stream"}],"execution_count":1},{"cell_type":"markdown","source":"**Tiền xử lí dữ liệu bị thiếu****","metadata":{}},{"cell_type":"code","source":"Dữ liệu huấn luyện (train.csv) có:\n891 hàng và 12 cột.\nCột Survived là biến mục tiêu (0: không sống sót, 1: sống sót).\nMột số cột có giá trị bị thiếu:\nAge: 714/891 không bị thiếu.\nCabin: chỉ có 204/891 không bị thiếu.\nEmbarked: 889/891 không bị thiếu.\nCác bước tiếp theo:\nTiền xử lý dữ liệu:\n\nXử lý các giá trị bị thiếu (Age, Cabin, Embarked).\nMã hóa các cột phân loại (Sex, Embarked).\nChọn các cột quan trọng làm đặc trưng.\nXây dựng mô hình:\n\nDùng 5 phương pháp được chọn: Logistic Regression, KNN, Decision Tree, Random Forest, Gradient Boosting.\nChạy thực nghiệm và phân tích kết quả:\n\nSo sánh độ chính xác trên tập kiểm tra.","metadata":{"trusted":true},"outputs":[],"execution_count":null},{"cell_type":"code","source":"import pandas as pd\n\n# Đọc dữ liệu\ntrain_data = pd.read_csv(\"/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/train.csv\")\ntest_data = pd.read_csv(\"/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/test.csv\")\n\n# Kiểm tra dữ liệu\ntrain_data.head()\n","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T03:37:38.950707Z","iopub.execute_input":"2025-01-17T03:37:38.951195Z","iopub.status.idle":"2025-01-17T03:37:38.984325Z","shell.execute_reply.started":"2025-01-17T03:37:38.951159Z","shell.execute_reply":"2025-01-17T03:37:38.983049Z"}},"outputs":[{"execution_count":10,"output_type":"execute_result","data":{"text/plain":"   PassengerId  Survived  Pclass  \\\n0            1         0       3   \n1            2         1       1   \n2            3         1       3   \n3            4         1       1   \n4            5         0       3   \n\n                                                Name     Sex   Age  SibSp  \\\n0                            Braund, Mr. Owen Harris    male  22.0      1   \n1  Cumings, Mrs. John Bradley (Florence Briggs Th...  female  38.0      1   \n2                             Heikkinen, Miss. Laina  female  26.0      0   \n3       Futrelle, Mrs. Jacques Heath (Lily May Peel)  female  35.0      1   \n4                           Allen, Mr. William Henry    male  35.0      0   \n\n   Parch            Ticket     Fare Cabin Embarked  \n0      0         A/5 21171   7.2500   NaN        S  \n1      0          PC 17599  71.2833   C85        C  \n2      0  STON/O2. 3101282   7.9250   NaN        S  \n3      0            113803  53.1000  C123        S  \n4      0            373450   8.0500   NaN        S  ","text/html":"<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>PassengerId</th>\n      <th>Survived</th>\n      <th>Pclass</th>\n      <th>Name</th>\n      <th>Sex</th>\n      <th>Age</th>\n      <th>SibSp</th>\n      <th>Parch</th>\n      <th>Ticket</th>\n      <th>Fare</th>\n      <th>Cabin</th>\n      <th>Embarked</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>1</td>\n      <td>0</td>\n      <td>3</td>\n      <td>Braund, Mr. Owen Harris</td>\n      <td>male</td>\n      <td>22.0</td>\n      <td>1</td>\n      <td>0</td>\n      <td>A/5 21171</td>\n      <td>7.2500</td>\n      <td>NaN</td>\n      <td>S</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>2</td>\n      <td>1</td>\n      <td>1</td>\n      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>\n      <td>female</td>\n      <td>38.0</td>\n      <td>1</td>\n      <td>0</td>\n      <td>PC 17599</td>\n      <td>71.2833</td>\n      <td>C85</td>\n      <td>C</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>3</td>\n      <td>1</td>\n      <td>3</td>\n      <td>Heikkinen, Miss. Laina</td>\n      <td>female</td>\n      <td>26.0</td>\n      <td>0</td>\n      <td>0</td>\n      <td>STON/O2. 3101282</td>\n      <td>7.9250</td>\n      <td>NaN</td>\n      <td>S</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>4</td>\n      <td>1</td>\n      <td>1</td>\n      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>\n      <td>female</td>\n      <td>35.0</td>\n      <td>1</td>\n      <td>0</td>\n      <td>113803</td>\n      <td>53.1000</td>\n      <td>C123</td>\n      <td>S</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>5</td>\n      <td>0</td>\n      <td>3</td>\n      <td>Allen, Mr. William Henry</td>\n      <td>male</td>\n      <td>35.0</td>\n      <td>0</td>\n      <td>0</td>\n      <td>373450</td>\n      <td>8.0500</td>\n      <td>NaN</td>\n      <td>S</td>\n    </tr>\n  </tbody>\n</table>\n</div>"},"metadata":{}}],"execution_count":10},{"cell_type":"code","source":"import pandas as pd\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.preprocessing import OneHotEncoder, StandardScaler\n\n# Load the train and test data\ntrain_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/train.csv')\ntest_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/test.csv')\n\n# Copy data for processing\ntrain_processed = train_data.copy()\ntest_processed = test_data.copy()\n\n# Step 1: Fill missing values\n# Age: Fill missing values with the median\nage_imputer = SimpleImputer(strategy='median')\ntrain_processed['Age'] = age_imputer.fit_transform(train_processed[['Age']])\ntest_processed['Age'] = age_imputer.transform(test_processed[['Age']])\n\n# Embarked: Fill missing values with the most frequent value\nembarked_imputer = SimpleImputer(strategy='most_frequent')\ntrain_processed['Embarked'] = embarked_imputer.fit_transform(train_processed[['Embarked']]).ravel()\ntest_processed['Embarked'] = embarked_imputer.transform(test_processed[['Embarked']]).ravel()\n\n# Fare: Fill missing values with the median (only in test set)\nfare_imputer = SimpleImputer(strategy='median')\ntest_processed['Fare'] = fare_imputer.fit_transform(test_processed[['Fare']])\n\n# Step 2: Encode categorical features (Sex and Embarked)\nencoder = OneHotEncoder(drop='first', sparse_output=False)  # Drop first to avoid multicollinearity\nsex_encoded_train = encoder.fit_transform(train_processed[['Sex']])\nsex_encoded_test = encoder.transform(test_processed[['Sex']])\n\nembarked_encoded_train = encoder.fit_transform(train_processed[['Embarked']])\nembarked_encoded_test = encoder.transform(test_processed[['Embarked']])\n\n# Create DataFrames for encoded features\nsex_encoded_train = pd.DataFrame(sex_encoded_train, columns=['Male'])\nsex_encoded_test = pd.DataFrame(sex_encoded_test, columns=['Male'])\n\nembarked_encoded_train = pd.DataFrame(embarked_encoded_train, columns=['Embarked_Q', 'Embarked_S'])\nembarked_encoded_test = pd.DataFrame(embarked_encoded_test, columns=['Embarked_Q', 'Embarked_S'])\n\n# Step 3: Combine features for training and testing\ntrain_final = pd.concat(\n    [train_processed[['PassengerId', 'Survived', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare']], \n     sex_encoded_train, embarked_encoded_train],\n    axis=1\n)\ntest_final = pd.concat(\n    [test_processed[['PassengerId', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare']], \n     sex_encoded_test, embarked_encoded_test],\n    axis=1\n)\n\n# Step 4: Standardize the numerical features\nscaler = StandardScaler()\nnumerical_features_train = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']\nnumerical_features_test = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']\n\ntrain_final[numerical_features_train] = scaler.fit_transform(train_final[numerical_features_train])\ntest_final[numerical_features_test] = scaler.transform(test_final[numerical_features_test])\n\nprint(train_final.head())\nprint(test_final.head())\n","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T04:03:11.856562Z","iopub.execute_input":"2025-01-17T04:03:11.857076Z","iopub.status.idle":"2025-01-17T04:03:11.970570Z","shell.execute_reply.started":"2025-01-17T04:03:11.857034Z","shell.execute_reply":"2025-01-17T04:03:11.968707Z"}},"outputs":[{"name":"stdout","text":"   PassengerId  Survived    Pclass       Age     SibSp     Parch      Fare  \\\n0            1         0  0.827377 -0.565736  0.432793 -0.473674 -0.502445   \n1            2         1 -1.566107  0.663861  0.432793 -0.473674  0.786845   \n2            3         1  0.827377 -0.258337 -0.474545 -0.473674 -0.488854   \n3            4         1 -1.566107  0.433312  0.432793 -0.473674  0.420730   \n4            5         0  0.827377  0.433312 -0.474545 -0.473674 -0.486337   \n\n   Male  Embarked_Q  Embarked_S  \n0   1.0         0.0         1.0  \n1   0.0         0.0         0.0  \n2   0.0         0.0         1.0  \n3   0.0         0.0         1.0  \n4   1.0         0.0         1.0  \n   PassengerId    Pclass       Age     SibSp     Parch      Fare  Male  \\\n0          892  0.827377  0.394887 -0.474545 -0.473674 -0.490783   1.0   \n1          893  0.827377  1.355510  0.432793 -0.473674 -0.507479   0.0   \n2          894 -0.369365  2.508257 -0.474545 -0.473674 -0.453367   1.0   \n3          895  0.827377 -0.181487 -0.474545 -0.473674 -0.474005   1.0   \n4          896  0.827377 -0.565736  0.432793  0.767630 -0.401017   0.0   \n\n   Embarked_Q  Embarked_S  \n0         1.0         0.0  \n1         0.0         1.0  \n2         1.0         0.0  \n3         0.0         1.0  \n4         0.0         1.0  \n","output_type":"stream"}],"execution_count":16},{"cell_type":"markdown","source":"**1. Logistic Regression**","metadata":{}},{"cell_type":"code","source":"from sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score\n\n# Tách dữ liệu huấn luyện và kiểm tra\nX_train = train_final.drop(columns=['PassengerId', 'Survived'])\ny_train = train_final['Survived']\nX_test = test_final.drop(columns=['PassengerId'])\n\n# Huấn luyện mô hình\nlogreg = LogisticRegression()\nlogreg.fit(X_train, y_train)\n\n# Dự đoán trên tập kiểm tra\ny_pred = logreg.predict(X_test)\n\n# Đánh giá mô hình\naccuracy = accuracy_score(y_train, logreg.predict(X_train))\nprint(f'Accuracy: {accuracy}')","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T04:34:20.930191Z","iopub.execute_input":"2025-01-17T04:34:20.930809Z","iopub.status.idle":"2025-01-17T04:34:20.979808Z","shell.execute_reply.started":"2025-01-17T04:34:20.930755Z","shell.execute_reply":"2025-01-17T04:34:20.978243Z"}},"outputs":[{"name":"stdout","text":"Accuracy: 0.8002244668911336\n","output_type":"stream"}],"execution_count":17},{"cell_type":"markdown","source":"**2. K-Nearest Neighbors (KNN)**","metadata":{}},{"cell_type":"code","source":"from sklearn.neighbors import KNeighborsClassifier\n\n# Huấn luyện mô hình\nknn = KNeighborsClassifier(n_neighbors=5)\nknn.fit(X_train, y_train)\n\n# Dự đoán trên tập kiểm tra\ny_pred = knn.predict(X_test)\n\n# Đánh giá mô hình\naccuracy = accuracy_score(y_train, knn.predict(X_train))\nprint(f'Accuracy: {accuracy}')","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T04:35:19.647654Z","iopub.execute_input":"2025-01-17T04:35:19.648096Z","iopub.status.idle":"2025-01-17T04:35:19.746239Z","shell.execute_reply.started":"2025-01-17T04:35:19.648060Z","shell.execute_reply":"2025-01-17T04:35:19.744892Z"}},"outputs":[{"name":"stdout","text":"Accuracy: 0.856341189674523\n","output_type":"stream"}],"execution_count":18},{"cell_type":"markdown","source":"**3. Decision Tree Classifier (CART)**","metadata":{}},{"cell_type":"code","source":"from sklearn.tree import DecisionTreeClassifier\n\n# Huấn luyện mô hình\ntree = DecisionTreeClassifier()\ntree.fit(X_train, y_train)\n\n# Dự đoán trên tập kiểm tra\ny_pred = tree.predict(X_test)\n\n# Đánh giá mô hình\naccuracy = accuracy_score(y_train, tree.predict(X_train))\nprint(f'Accuracy: {accuracy}')","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T04:35:55.609699Z","iopub.execute_input":"2025-01-17T04:35:55.610083Z","iopub.status.idle":"2025-01-17T04:35:55.695067Z","shell.execute_reply.started":"2025-01-17T04:35:55.610051Z","shell.execute_reply":"2025-01-17T04:35:55.692181Z"}},"outputs":[{"name":"stdout","text":"Accuracy: 0.9797979797979798\n","output_type":"stream"}],"execution_count":19},{"cell_type":"markdown","source":"**4. Random Forest**","metadata":{}},{"cell_type":"code","source":"from sklearn.ensemble import RandomForestClassifier\n\n# Huấn luyện mô hình\nforest = RandomForestClassifier(n_estimators=100)\nforest.fit(X_train, y_train)\n\n# Dự đoán trên tập kiểm tra\ny_pred = forest.predict(X_test)\n\n# Đánh giá mô hình\naccuracy = accuracy_score(y_train, forest.predict(X_train))\nprint(f'Accuracy: {accuracy}')","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T04:36:30.136290Z","iopub.execute_input":"2025-01-17T04:36:30.136742Z","iopub.status.idle":"2025-01-17T04:36:30.543534Z","shell.execute_reply.started":"2025-01-17T04:36:30.136703Z","shell.execute_reply":"2025-01-17T04:36:30.542170Z"}},"outputs":[{"name":"stdout","text":"Accuracy: 0.9797979797979798\n","output_type":"stream"}],"execution_count":20},{"cell_type":"markdown","source":"**5. Gradient Boosting (XGBoost)**","metadata":{}},{"cell_type":"code","source":"import xgboost as xgb\nfrom xgboost import XGBClassifier\n\n# Huấn luyện mô hình\nxgb_model = XGBClassifier()\nxgb_model.fit(X_train, y_train)\n\n# Dự đoán trên tập kiểm tra\ny_pred = xgb_model.predict(X_test)\n\n# Đánh giá mô hình\naccuracy = accuracy_score(y_train, xgb_model.predict(X_train))\nprint(f'Accuracy: {accuracy}')","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T05:06:21.295537Z","iopub.execute_input":"2025-01-17T05:06:21.295899Z","iopub.status.idle":"2025-01-17T05:06:21.405300Z","shell.execute_reply.started":"2025-01-17T05:06:21.295869Z","shell.execute_reply":"2025-01-17T05:06:21.404155Z"}},"outputs":[{"name":"stdout","text":"Accuracy: 0.9640852974186308\n","output_type":"stream"}],"execution_count":29},{"cell_type":"markdown","source":"**khác**","metadata":{}},{"cell_type":"code","source":"from sklearn.model_selection import train_test_split\n\n# Separate features (X) and target (y) from the training dataset\nX = train_final.drop(columns=['PassengerId', 'Survived'])\ny = train_final['Survived']\n\n# Split into training and validation sets (80% train, 20% validation)\nX_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n\nX_train.shape, X_val.shape, y_train.shape, y_val.shape\n","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T04:39:23.255517Z","iopub.execute_input":"2025-01-17T04:39:23.256215Z","iopub.status.idle":"2025-01-17T04:39:23.277670Z","shell.execute_reply.started":"2025-01-17T04:39:23.256160Z","shell.execute_reply":"2025-01-17T04:39:23.276129Z"}},"outputs":[{"execution_count":23,"output_type":"execute_result","data":{"text/plain":"((712, 8), (179, 8), (712,), (179,))"},"metadata":{}}],"execution_count":23},{"cell_type":"code","source":"from sklearn.linear_model import LogisticRegression\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\n\n# Initialize models\nmodels = {\n    'Logistic Regression': LogisticRegression(random_state=42, max_iter=1000),\n    'K-Nearest Neighbors': KNeighborsClassifier(n_neighbors=5),\n    'Decision Tree': DecisionTreeClassifier(random_state=42),\n    'Random Forest': RandomForestClassifier(random_state=42, n_estimators=100),\n    'Gradient Boosting': GradientBoostingClassifier(random_state=42)\n}\n\n# Train and evaluate each model\nresults = {}\nfor name, model in models.items():\n    # Train the model\n    model.fit(X_train, y_train)\n    # Predict on validation data\n    y_pred = model.predict(X_val)\n    # Calculate accuracy\n    accuracy = accuracy_score(y_val, y_pred)\n    results[name] = accuracy\n\nresults\n","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T04:39:27.812540Z","iopub.execute_input":"2025-01-17T04:39:27.812885Z","iopub.status.idle":"2025-01-17T04:39:28.255506Z","shell.execute_reply.started":"2025-01-17T04:39:27.812859Z","shell.execute_reply":"2025-01-17T04:39:28.254304Z"}},"outputs":[{"execution_count":24,"output_type":"execute_result","data":{"text/plain":"{'Logistic Regression': 0.8044692737430168,\n 'K-Nearest Neighbors': 0.8100558659217877,\n 'Decision Tree': 0.8212290502793296,\n 'Random Forest': 0.8156424581005587,\n 'Gradient Boosting': 0.7988826815642458}"},"metadata":{}}],"execution_count":24},{"cell_type":"code","source":"import pandas as pd\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.preprocessing import OneHotEncoder, StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\n\n# Load the train and test data\ntrain_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/train.csv')\ntest_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/test.csv')\n\n# Copy data for processing\ntrain_processed = train_data.copy()\ntest_processed = test_data.copy()\n\n# Step 1: Fill missing values\n# Age: Fill missing values with the median\nage_imputer = SimpleImputer(strategy='median')\ntrain_processed['Age'] = age_imputer.fit_transform(train_processed[['Age']])\ntest_processed['Age'] = age_imputer.transform(test_processed[['Age']])\n\n# Embarked: Fill missing values with the most frequent value\nembarked_imputer = SimpleImputer(strategy='most_frequent')\ntrain_processed['Embarked'] = embarked_imputer.fit_transform(train_processed[['Embarked']]).ravel()\ntest_processed['Embarked'] = embarked_imputer.transform(test_processed[['Embarked']]).ravel()\n\n# Fare: Fill missing values with the median (only in test set)\nfare_imputer = SimpleImputer(strategy='median')\ntest_processed['Fare'] = fare_imputer.fit_transform(test_processed[['Fare']])\n\n# Step 2: Encode categorical features (Sex and Embarked)\nencoder = OneHotEncoder(drop='first', sparse_output=False)  # Drop first to avoid multicollinearity\nsex_encoded_train = encoder.fit_transform(train_processed[['Sex']])\nsex_encoded_test = encoder.transform(test_processed[['Sex']])\n\nembarked_encoded_train = encoder.fit_transform(train_processed[['Embarked']])\nembarked_encoded_test = encoder.transform(test_processed[['Embarked']])\n\n# Create DataFrames for encoded features\nsex_encoded_train = pd.DataFrame(sex_encoded_train, columns=['Male'])\nsex_encoded_test = pd.DataFrame(sex_encoded_test, columns=['Male'])\n\nembarked_encoded_train = pd.DataFrame(embarked_encoded_train, columns=['Embarked_Q', 'Embarked_S'])\nembarked_encoded_test = pd.DataFrame(embarked_encoded_test, columns=['Embarked_Q', 'Embarked_S'])\n\n# Step 3: Combine features for training and testing\ntrain_final = pd.concat(\n    [train_processed[['PassengerId', 'Survived', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare']], \n     sex_encoded_train, embarked_encoded_train],\n    axis=1\n)\ntest_final = pd.concat(\n    [test_processed[['PassengerId', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare']], \n     sex_encoded_test, embarked_encoded_test],\n    axis=1\n)\n\n# Step 4: Standardize the numerical features\nscaler = StandardScaler()\nnumerical_features_train = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']\nnumerical_features_test = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']\n\ntrain_final[numerical_features_train] = scaler.fit_transform(train_final[numerical_features_train])\ntest_final[numerical_features_test] = scaler.transform(test_final[numerical_features_test])\n\n# Separate features (X) and target (y) from the training dataset\nX_train = train_final.drop(columns=['PassengerId', 'Survived'])\ny_train = train_final['Survived']\nX_test = test_final.drop(columns=['PassengerId'])\n\n# Initialize models\nmodels = {\n    'Logistic Regression': LogisticRegression(random_state=42, max_iter=1000),\n    'K-Nearest Neighbors': KNeighborsClassifier(n_neighbors=5),\n    'Decision Tree': DecisionTreeClassifier(random_state=42),\n    'Random Forest': RandomForestClassifier(random_state=42, n_estimators=100),\n    'Gradient Boosting': GradientBoostingClassifier(random_state=42)\n}\n\n# Train and evaluate each model on the training data\nresults = {}\nfor name, model in models.items():\n    # Train the model\n    model.fit(X_train, y_train)\n    # Predict on training data to evaluate performance\n    y_pred_train = model.predict(X_train)\n    # Calculate accuracy on training data\n    accuracy_train = accuracy_score(y_train, y_pred_train)\n    results[name] = accuracy_train\n\nresults\n","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T05:05:50.236486Z","iopub.execute_input":"2025-01-17T05:05:50.236920Z","iopub.status.idle":"2025-01-17T05:05:50.739302Z","shell.execute_reply.started":"2025-01-17T05:05:50.236888Z","shell.execute_reply":"2025-01-17T05:05:50.738262Z"}},"outputs":[{"execution_count":26,"output_type":"execute_result","data":{"text/plain":"{'Logistic Regression': 0.8002244668911336,\n 'K-Nearest Neighbors': 0.856341189674523,\n 'Decision Tree': 0.9797979797979798,\n 'Random Forest': 0.9797979797979798,\n 'Gradient Boosting': 0.8888888888888888}"},"metadata":{}}],"execution_count":26},{"cell_type":"markdown","source":"Dự đoán","metadata":{}},{"cell_type":"code","source":"import pandas as pd\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.preprocessing import OneHotEncoder, StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\n\n# Load the train and test data\ntrain_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/train.csv')\ntest_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/test.csv')\n\n\n# Copy data for processing\ntrain_processed = train_data.copy()\ntest_processed = test_data.copy()\n\n# Step 1: Fill missing values\n# Age: Fill missing values with the median\nage_imputer = SimpleImputer(strategy='median')\ntrain_processed['Age'] = age_imputer.fit_transform(train_processed[['Age']])\ntest_processed['Age'] = age_imputer.transform(test_processed[['Age']])\n\n# Embarked: Fill missing values with the most frequent value\nembarked_imputer = SimpleImputer(strategy='most_frequent')\ntrain_processed['Embarked'] = embarked_imputer.fit_transform(train_processed[['Embarked']]).ravel()\ntest_processed['Embarked'] = embarked_imputer.transform(test_processed[['Embarked']]).ravel()\n\n# Fare: Fill missing values with the median (only in test set)\nfare_imputer = SimpleImputer(strategy='median')\ntest_processed['Fare'] = fare_imputer.fit_transform(test_processed[['Fare']])\n\n# Step 2: Encode categorical features (Sex and Embarked)\nencoder = OneHotEncoder(drop='first', sparse_output=False)  # Drop first to avoid multicollinearity\nsex_encoded_train = encoder.fit_transform(train_processed[['Sex']])\nsex_encoded_test = encoder.transform(test_processed[['Sex']])\n\nembarked_encoded_train = encoder.fit_transform(train_processed[['Embarked']])\nembarked_encoded_test = encoder.transform(test_processed[['Embarked']])\n\n# Create DataFrames for encoded features\nsex_encoded_train = pd.DataFrame(sex_encoded_train, columns=['Male'])\nsex_encoded_test = pd.DataFrame(sex_encoded_test, columns=['Male'])\n\nembarked_encoded_train = pd.DataFrame(embarked_encoded_train, columns=['Embarked_Q', 'Embarked_S'])\nembarked_encoded_test = pd.DataFrame(embarked_encoded_test, columns=['Embarked_Q', 'Embarked_S'])\n\n# Step 3: Combine features for training and testing\ntrain_final = pd.concat(\n    [train_processed[['PassengerId', 'Survived', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare']], \n     sex_encoded_train, embarked_encoded_train],\n    axis=1\n)\ntest_final = pd.concat(\n    [test_processed[['PassengerId', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare']], \n     sex_encoded_test, embarked_encoded_test],\n    axis=1\n)\n\n# Step 4: Standardize the numerical features\nscaler = StandardScaler()\nnumerical_features_train = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']\nnumerical_features_test = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']\n\ntrain_final[numerical_features_train] = scaler.fit_transform(train_final[numerical_features_train])\ntest_final[numerical_features_test] = scaler.transform(test_final[numerical_features_test])\n\n# Separate features (X) and target (y) from the training dataset\nX_train = train_final.drop(columns=['PassengerId', 'Survived'])\ny_train = train_final['Survived']\nX_test = test_final.drop(columns=['PassengerId'])\n\n# Initialize models\nmodels = {\n    'Logistic Regression': LogisticRegression(random_state=42, max_iter=1000),\n    'K-Nearest Neighbors': KNeighborsClassifier(n_neighbors=5),\n    'Decision Tree': DecisionTreeClassifier(random_state=42),\n    'Random Forest': RandomForestClassifier(random_state=42, n_estimators=100),\n    'Gradient Boosting': GradientBoostingClassifier(random_state=42)\n}\n\n# Train and evaluate each model on the training data\nresults = {}\nfor name, model in models.items():\n    # Train the model\n    model.fit(X_train, y_train)\n    # Predict on training data to evaluate performance\n    y_pred_train = model.predict(X_train)\n    # Calculate accuracy on training data\n    accuracy_train = accuracy_score(y_train, y_pred_train)\n    results[name] = accuracy_train\n\n# Dự đoán trên tập kiểm tra (test.csv) và kiểm tra kết quả dự đoán của các mô hình học máy đã huấn luyện.\npredictions = {}\nfor name, model in models.items():\n    y_pred_test = model.predict(X_test)\n    predictions[name] = y_pred_test\n\n# In kết quả dự đoán của các mô hình\nfor name, y_pred_test in predictions.items():\n    print(f\"Predictions for {name}:\")\n    print(y_pred_test[:10])  # In 10 kết quả đầu tiên để kiểm tra\n\nresults, predictions['Logistic Regression'][:10], predictions['K-Nearest Neighbors'][:10], predictions['Decision Tree'][:10], predictions['Random Forest'][:10], predictions['Gradient Boosting'][:10]\n","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T05:19:09.760868Z","iopub.execute_input":"2025-01-17T05:19:09.761588Z","iopub.status.idle":"2025-01-17T05:19:10.403451Z","shell.execute_reply.started":"2025-01-17T05:19:09.761530Z","shell.execute_reply":"2025-01-17T05:19:10.402265Z"}},"outputs":[{"name":"stdout","text":"Predictions for Logistic Regression:\n[0 0 0 0 1 0 1 0 1 0]\nPredictions for K-Nearest Neighbors:\n[0 0 0 1 0 0 1 0 1 0]\nPredictions for Decision Tree:\n[0 0 1 1 1 0 0 0 1 0]\nPredictions for Random Forest:\n[0 0 0 1 0 0 0 0 1 0]\nPredictions for Gradient Boosting:\n[0 0 0 0 0 0 0 0 1 0]\n","output_type":"stream"},{"execution_count":30,"output_type":"execute_result","data":{"text/plain":"({'Logistic Regression': 0.8002244668911336,\n  'K-Nearest Neighbors': 0.856341189674523,\n  'Decision Tree': 0.9797979797979798,\n  'Random Forest': 0.9797979797979798,\n  'Gradient Boosting': 0.8888888888888888},\n array([0, 0, 0, 0, 1, 0, 1, 0, 1, 0]),\n array([0, 0, 0, 1, 0, 0, 1, 0, 1, 0]),\n array([0, 0, 1, 1, 1, 0, 0, 0, 1, 0]),\n array([0, 0, 0, 1, 0, 0, 0, 0, 1, 0]),\n array([0, 0, 0, 0, 0, 0, 0, 0, 1, 0]))"},"metadata":{}}],"execution_count":30},{"cell_type":"markdown","source":"**File nộp**","metadata":{}},{"cell_type":"code","source":"import pandas as pd\n\n# Giả sử y_pred là kết quả dự đoán của mô hình trên tập kiểm tra\n# Để minh họa, mình sẽ sử dụng dự đoán từ mô hình Logistic Regression\ny_pred = predictions['Logistic Regression']\n\n# Tạo DataFrame cho file nộp kết quả\nsubmission = pd.DataFrame({\n    'PassengerId': test_data['PassengerId'],\n    'Survived': y_pred\n})\n\n# Lưu file nộp kết quả\nsubmission.to_csv('submission.csv', index=False)\n\n# Tải file về máy tính\nfrom IPython.display import FileLink\nFileLink(r'submission.csv')","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T05:30:56.289153Z","iopub.execute_input":"2025-01-17T05:30:56.289574Z","iopub.status.idle":"2025-01-17T05:30:56.299979Z","shell.execute_reply.started":"2025-01-17T05:30:56.289543Z","shell.execute_reply":"2025-01-17T05:30:56.298877Z"}},"outputs":[{"execution_count":40,"output_type":"execute_result","data":{"text/plain":"/kaggle/working/submission.csv","text/html":"<a href='submission.csv' target='_blank'>submission.csv</a><br>"},"metadata":{}}],"execution_count":40},{"cell_type":"markdown","source":"model khác","metadata":{}},{"cell_type":"code","source":"import pandas as pd\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.preprocessing import OneHotEncoder, StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import GridSearchCV, train_test_split\nfrom sklearn.metrics import accuracy_score\n\n# Load the train and test data\ntrain_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/train.csv')\ntest_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/test.csv')\n\n\n# Feature Engineering\ntrain_data['FamilySize'] = train_data['SibSp'] + train_data['Parch']\ntest_data['FamilySize'] = test_data['SibSp'] + test_data['Parch']\ntrain_data['IsAlone'] = (train_data['FamilySize'] == 0).astype(int)\ntest_data['IsAlone'] = (test_data['FamilySize'] == 0).astype(int)\n\n# Fill missing values\nage_imputer = SimpleImputer(strategy='median')\ntrain_data['Age'] = age_imputer.fit_transform(train_data[['Age']])\ntest_data['Age'] = age_imputer.transform(test_data[['Age']])\n\nembarked_imputer = SimpleImputer(strategy='most_frequent')\ntrain_data['Embarked'] = embarked_imputer.fit_transform(train_data[['Embarked']]).ravel()\ntest_data['Embarked'] = embarked_imputer.transform(test_data[['Embarked']]).ravel()\n\nfare_imputer = SimpleImputer(strategy='median')\ntest_data['Fare'] = fare_imputer.fit_transform(test_data[['Fare']])\n\n# Encode categorical features\nencoder = OneHotEncoder(drop='first', sparse_output=False)\nsex_encoded_train = encoder.fit_transform(train_data[['Sex']])\nsex_encoded_test = encoder.transform(test_data[['Sex']])\nembarked_encoded_train = encoder.fit_transform(train_data[['Embarked']])\nembarked_encoded_test = encoder.transform(test_data[['Embarked']])\n\n# Create DataFrames for encoded features\nsex_encoded_train = pd.DataFrame(sex_encoded_train, columns=['Male'])\nsex_encoded_test = pd.DataFrame(sex_encoded_test, columns=['Male'])\nembarked_encoded_train = pd.DataFrame(embarked_encoded_train, columns=['Embarked_Q', 'Embarked_S'])\nembarked_encoded_test = pd.DataFrame(embarked_encoded_test, columns=['Embarked_Q', 'Embarked_S'])\n\n# Combine features for training and testing\ntrain_final = pd.concat(\n    [train_data[['PassengerId', 'Survived', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone']], \n     sex_encoded_train, embarked_encoded_train],\n    axis=1\n)\ntest_final = pd.concat(\n    [test_data[['PassengerId', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone']], \n     sex_encoded_test, embarked_encoded_test],\n    axis=1\n)\n\n# Standardize the numerical features\nscaler = StandardScaler()\nnumerical_features_train = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize']\nnumerical_features_test = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize']\n\ntrain_final[numerical_features_train] = scaler.fit_transform(train_final[numerical_features_train])\ntest_final[numerical_features_test] = scaler.transform(test_final[numerical_features_test])\n\n# Separate features (X) and target (y) from the training dataset\nX = train_final.drop(columns=['PassengerId', 'Survived'])\ny = train_final['Survived']\n\n# Split into training and validation sets\nX_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n\n# Initialize and tune the model\nparam_grid = {\n    'n_estimators': [100, 200, 300],\n    'max_depth': [None, 10, 20, 30],\n    'min_samples_split': [2, 5, 10],\n    'min_samples_leaf': [1, 2, 4]\n}\nrf = RandomForestClassifier(random_state=42)\ngrid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=5, n_jobs=-1, verbose=2)\ngrid_search.fit(X_train, y_train)\n\n# Best parameters and model\nbest_rf = grid_search.best_estimator_\n\n# Predict on validation data\ny_pred_val = best_rf.predict(X_val)\naccuracy_val = accuracy_score(y_val, y_pred_val)\nprint(f'Validation Accuracy: {accuracy_val}')\n\n# Predict on test data\ny_pred_test = best_rf.predict(test_final.drop(columns=['PassengerId']))\n\n# Create submission file\nsubmission = pd.DataFrame({\n    'PassengerId': test_data['PassengerId'],\n    'Survived': y_pred_test\n})\nsubmission.to_csv('submission.csv', index=False)","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T05:34:22.916120Z","iopub.execute_input":"2025-01-17T05:34:22.916546Z","iopub.status.idle":"2025-01-17T05:36:03.220936Z","shell.execute_reply.started":"2025-01-17T05:34:22.916514Z","shell.execute_reply":"2025-01-17T05:36:03.219606Z"}},"outputs":[{"name":"stdout","text":"Fitting 5 folds for each of 108 candidates, totalling 540 fits\nValidation Accuracy: 0.8044692737430168\n","output_type":"stream"}],"execution_count":41},{"cell_type":"code","source":"import pandas as pd\n\n# Giả sử y_pred là kết quả dự đoán của mô hình trên tập kiểm tra\n# Để minh họa, mình sẽ sử dụng dự đoán từ mô hình Logistic Regression\ny_pred = predictions['Logistic Regression']\n\n# Tạo DataFrame cho file nộp kết quả\nsubmission = pd.DataFrame({\n    'PassengerId': test_data['PassengerId'],\n    'Survived': y_pred\n})\n\n# Lưu file nộp kết quả\nsubmission.to_csv('submission.csv', index=False)\n\n# Tải file về máy tính\nfrom IPython.display import FileLink\nFileLink(r'submission.csv')","metadata":{"trusted":true,"execution":{"iopub.status.busy":"2025-01-17T05:36:35.126280Z","iopub.execute_input":"2025-01-17T05:36:35.126717Z","iopub.status.idle":"2025-01-17T05:36:35.139071Z","shell.execute_reply.started":"2025-01-17T05:36:35.126682Z","shell.execute_reply":"2025-01-17T05:36:35.137433Z"}},"outputs":[{"execution_count":42,"output_type":"execute_result","data":{"text/plain":"/kaggle/working/submission.csv","text/html":"<a href='submission.csv' target='_blank'>submission.csv</a><br>"},"metadata":{}}],"execution_count":42}]}
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "a4e2f9bc",
+   "metadata": {
+    "_cell_guid": "b1076dfc-b9ad-4769-8c92-a6c4dae69d19",
+    "_uuid": "8f2839f25d086af736a60e9eeb907d3b93b6e0e5",
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:52:58.032951Z",
+     "iopub.status.busy": "2025-01-18T12:52:58.032561Z",
+     "iopub.status.idle": "2025-01-18T12:52:59.331526Z",
+     "shell.execute_reply": "2025-01-18T12:52:59.330399Z"
+    },
+    "papermill": {
+     "duration": 1.307885,
+     "end_time": "2025-01-18T12:52:59.333349",
+     "exception": false,
+     "start_time": "2025-01-18T12:52:58.025464",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/train.csv\n",
+      "/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/test.csv\n",
+      "/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/gender_submission.csv\n"
+     ]
+    }
+   ],
+   "source": [
+    "# This Python 3 environment comes with many helpful analytics libraries installed\n",
+    "# It is defined by the kaggle/python Docker image: https://github.com/kaggle/docker-python\n",
+    "# For example, here's several helpful packages to load\n",
+    "\n",
+    "import numpy as np # linear algebra\n",
+    "import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)\n",
+    "\n",
+    "# Input data files are available in the read-only \"../input/\" directory\n",
+    "# For example, running this (by clicking run or pressing Shift+Enter) will list all files under the input directory\n",
+    "\n",
+    "import os\n",
+    "for dirname, _, filenames in os.walk('/kaggle/input'):\n",
+    "    for filename in filenames:\n",
+    "        print(os.path.join(dirname, filename))\n",
+    "\n",
+    "# You can write up to 20GB to the current directory (/kaggle/working/) that gets preserved as output when you create a version using \"Save & Run All\" \n",
+    "# You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7bb43393",
+   "metadata": {
+    "papermill": {
+     "duration": 0.004839,
+     "end_time": "2025-01-18T12:52:59.344093",
+     "exception": false,
+     "start_time": "2025-01-18T12:52:59.339254",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "**Tiền xử lí dữ liệu**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "81b18f72",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:52:59.355544Z",
+     "iopub.status.busy": "2025-01-18T12:52:59.355020Z",
+     "iopub.status.idle": "2025-01-18T12:53:02.157574Z",
+     "shell.execute_reply": "2025-01-18T12:53:02.156165Z"
+    },
+    "papermill": {
+     "duration": 2.81055,
+     "end_time": "2025-01-18T12:53:02.159599",
+     "exception": false,
+     "start_time": "2025-01-18T12:52:59.349049",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Train Data After Processing:\n",
+      "   PassengerId  Survived    Pclass       Age     SibSp     Parch      Fare  \\\n",
+      "0            1         0  0.827377 -0.565736  0.432793 -0.473674 -0.502445   \n",
+      "1            2         1 -1.566107  0.663861  0.432793 -0.473674  0.786845   \n",
+      "2            3         1  0.827377 -0.258337 -0.474545 -0.473674 -0.488854   \n",
+      "3            4         1 -1.566107  0.433312  0.432793 -0.473674  0.420730   \n",
+      "4            5         0  0.827377  0.433312 -0.474545 -0.473674 -0.486337   \n",
+      "\n",
+      "   Sex_male  Embarked_Q  Embarked_S  ...  Cabin_E8  Cabin_F E69  Cabin_F G63  \\\n",
+      "0       1.0         0.0         1.0  ...       0.0          0.0          0.0   \n",
+      "1       0.0         0.0         0.0  ...       0.0          0.0          0.0   \n",
+      "2       0.0         0.0         1.0  ...       0.0          0.0          0.0   \n",
+      "3       0.0         0.0         1.0  ...       0.0          0.0          0.0   \n",
+      "4       1.0         0.0         1.0  ...       0.0          0.0          0.0   \n",
+      "\n",
+      "   Cabin_F G73  Cabin_F2  Cabin_F33  Cabin_F38  Cabin_F4  Cabin_G6  Cabin_T  \n",
+      "0          0.0       0.0        0.0        0.0       0.0       0.0      0.0  \n",
+      "1          0.0       0.0        0.0        0.0       0.0       0.0      0.0  \n",
+      "2          0.0       0.0        0.0        0.0       0.0       0.0      0.0  \n",
+      "3          0.0       0.0        0.0        0.0       0.0       0.0      0.0  \n",
+      "4          0.0       0.0        0.0        0.0       0.0       0.0      0.0  \n",
+      "\n",
+      "[5 rows x 156 columns]\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.impute import SimpleImputer\n",
+    "from sklearn.preprocessing import OneHotEncoder, StandardScaler\n",
+    "\n",
+    "# Load the train data\n",
+    "train_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/train.csv')\n",
+    "\n",
+    "# Copy data for processing\n",
+    "train_processed = train_data.copy()\n",
+    "\n",
+    "# Step 1: Fill missing values for all columns\n",
+    "# Age, Fare: Fill missing values with the median\n",
+    "age_imputer = SimpleImputer(strategy='median')\n",
+    "fare_imputer = SimpleImputer(strategy='median')\n",
+    "train_processed['Age'] = age_imputer.fit_transform(train_processed[['Age']])\n",
+    "train_processed['Fare'] = fare_imputer.fit_transform(train_processed[['Fare']])\n",
+    "\n",
+    "# Embarked, Cabin: Fill missing values with the most frequent value\n",
+    "embarked_imputer = SimpleImputer(strategy='most_frequent')\n",
+    "cabin_imputer = SimpleImputer(strategy='most_frequent')\n",
+    "train_processed['Embarked'] = embarked_imputer.fit_transform(train_processed[['Embarked']]).ravel()\n",
+    "train_processed['Cabin'] = cabin_imputer.fit_transform(train_processed[['Cabin']]).ravel()\n",
+    "\n",
+    "# Step 2: Encode categorical features (Sex, Embarked, Cabin)\n",
+    "encoder_sex = OneHotEncoder(drop='first', sparse_output=False)  # Drop first to avoid multicollinearity\n",
+    "encoder_embarked = OneHotEncoder(drop='first', sparse_output=False)\n",
+    "encoder_cabin = OneHotEncoder(drop='first', sparse_output=False)\n",
+    "\n",
+    "sex_encoded_train = encoder_sex.fit_transform(train_processed[['Sex']])\n",
+    "embarked_encoded_train = encoder_embarked.fit_transform(train_processed[['Embarked']])\n",
+    "cabin_encoded_train = encoder_cabin.fit_transform(train_processed[['Cabin']])\n",
+    "\n",
+    "# Create DataFrames for encoded features\n",
+    "sex_encoded_train = pd.DataFrame(sex_encoded_train, columns=encoder_sex.get_feature_names_out(['Sex']))\n",
+    "embarked_encoded_train = pd.DataFrame(embarked_encoded_train, columns=encoder_embarked.get_feature_names_out(['Embarked']))\n",
+    "cabin_encoded_train = pd.DataFrame(cabin_encoded_train, columns=encoder_cabin.get_feature_names_out(['Cabin']))\n",
+    "\n",
+    "# Reset index for concatenation\n",
+    "sex_encoded_train.reset_index(drop=True, inplace=True)\n",
+    "embarked_encoded_train.reset_index(drop=True, inplace=True)\n",
+    "cabin_encoded_train.reset_index(drop=True, inplace=True)\n",
+    "train_processed.reset_index(drop=True, inplace=True)\n",
+    "\n",
+    "# Step 3: Combine features for training\n",
+    "train_final = pd.concat(\n",
+    "    [train_processed[['PassengerId', 'Survived', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare']], \n",
+    "     sex_encoded_train, embarked_encoded_train, cabin_encoded_train],\n",
+    "    axis=1\n",
+    ")\n",
+    "\n",
+    "# Step 4: Standardize the numerical features\n",
+    "scaler = StandardScaler()\n",
+    "numerical_features_train = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']\n",
+    "train_final[numerical_features_train] = scaler.fit_transform(train_final[numerical_features_train])\n",
+    "\n",
+    "# Check the result\n",
+    "print(\"Train Data After Processing:\")\n",
+    "print(train_final.head())\n",
+    "\n",
+    "# Save the processed data to a CSV file\n",
+    "train_final.to_csv('train_final.csv', index=False)  # Lưu DataFrame vào tệp CSV"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "608eb20d",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:02.171222Z",
+     "iopub.status.busy": "2025-01-18T12:53:02.170892Z",
+     "iopub.status.idle": "2025-01-18T12:53:02.249455Z",
+     "shell.execute_reply": "2025-01-18T12:53:02.248226Z"
+    },
+    "papermill": {
+     "duration": 0.086732,
+     "end_time": "2025-01-18T12:53:02.251536",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:02.164804",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Test Data After Processing:\n",
+      "   PassengerId    Pclass       Age     SibSp     Parch      Fare  Sex_male  \\\n",
+      "0          892  0.873482  0.386231 -0.499470 -0.400248 -0.497413       1.0   \n",
+      "1          893  0.873482  1.371370  0.616992 -0.400248 -0.512278       0.0   \n",
+      "2          894 -0.315819  2.553537 -0.499470 -0.400248 -0.464100       1.0   \n",
+      "3          895  0.873482 -0.204852 -0.499470 -0.400248 -0.482475       1.0   \n",
+      "4          896  0.873482 -0.598908  0.616992  0.619896 -0.417492       0.0   \n",
+      "\n",
+      "   Embarked_Q  Embarked_S  Cabin_A18  ...  Cabin_E52  Cabin_E60  Cabin_F  \\\n",
+      "0         1.0         0.0        0.0  ...        0.0        0.0      0.0   \n",
+      "1         0.0         1.0        0.0  ...        0.0        0.0      0.0   \n",
+      "2         1.0         0.0        0.0  ...        0.0        0.0      0.0   \n",
+      "3         0.0         1.0        0.0  ...        0.0        0.0      0.0   \n",
+      "4         0.0         1.0        0.0  ...        0.0        0.0      0.0   \n",
+      "\n",
+      "   Cabin_F E46  Cabin_F E57  Cabin_F G63  Cabin_F2  Cabin_F33  Cabin_F4  \\\n",
+      "0          0.0          0.0          0.0       0.0        0.0       0.0   \n",
+      "1          0.0          0.0          0.0       0.0        0.0       0.0   \n",
+      "2          0.0          0.0          0.0       0.0        0.0       0.0   \n",
+      "3          0.0          0.0          0.0       0.0        0.0       0.0   \n",
+      "4          0.0          0.0          0.0       0.0        0.0       0.0   \n",
+      "\n",
+      "   Cabin_G6  \n",
+      "0       0.0  \n",
+      "1       0.0  \n",
+      "2       0.0  \n",
+      "3       0.0  \n",
+      "4       0.0  \n",
+      "\n",
+      "[5 rows x 84 columns]\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.impute import SimpleImputer\n",
+    "from sklearn.preprocessing import OneHotEncoder, StandardScaler\n",
+    "\n",
+    "# Load the test data\n",
+    "test_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/test.csv')\n",
+    "\n",
+    "# Copy data for processing\n",
+    "test_processed = test_data.copy()\n",
+    "\n",
+    "# Step 1: Fill missing values for all columns\n",
+    "# Age, Fare: Fill missing values with the median\n",
+    "age_imputer = SimpleImputer(strategy='median')\n",
+    "fare_imputer = SimpleImputer(strategy='median')\n",
+    "test_processed['Age'] = age_imputer.fit_transform(test_processed[['Age']])\n",
+    "test_processed['Fare'] = fare_imputer.fit_transform(test_processed[['Fare']])\n",
+    "\n",
+    "# Embarked, Cabin: Fill missing values with the most frequent value\n",
+    "embarked_imputer = SimpleImputer(strategy='most_frequent')\n",
+    "cabin_imputer = SimpleImputer(strategy='most_frequent')\n",
+    "test_processed['Embarked'] = embarked_imputer.fit_transform(test_processed[['Embarked']]).ravel()\n",
+    "test_processed['Cabin'] = cabin_imputer.fit_transform(test_processed[['Cabin']]).ravel()\n",
+    "\n",
+    "# Step 2: Encode categorical features (Sex, Embarked, Cabin)\n",
+    "encoder_sex = OneHotEncoder(drop='first', sparse_output=False)  # Drop first to avoid multicollinearity\n",
+    "encoder_embarked = OneHotEncoder(drop='first', sparse_output=False)\n",
+    "encoder_cabin = OneHotEncoder(drop='first', sparse_output=False)\n",
+    "\n",
+    "sex_encoded_test = encoder_sex.fit_transform(test_processed[['Sex']])\n",
+    "embarked_encoded_test = encoder_embarked.fit_transform(test_processed[['Embarked']])\n",
+    "cabin_encoded_test = encoder_cabin.fit_transform(test_processed[['Cabin']])\n",
+    "\n",
+    "# Create DataFrames for encoded features\n",
+    "sex_encoded_test = pd.DataFrame(sex_encoded_test, columns=encoder_sex.get_feature_names_out(['Sex']))\n",
+    "embarked_encoded_test = pd.DataFrame(embarked_encoded_test, columns=encoder_embarked.get_feature_names_out(['Embarked']))\n",
+    "cabin_encoded_test = pd.DataFrame(cabin_encoded_test, columns=encoder_cabin.get_feature_names_out(['Cabin']))\n",
+    "\n",
+    "# Reset index for concatenation\n",
+    "sex_encoded_test.reset_index(drop=True, inplace=True)\n",
+    "embarked_encoded_test.reset_index(drop=True, inplace=True)\n",
+    "cabin_encoded_test.reset_index(drop=True, inplace=True)\n",
+    "test_processed.reset_index(drop=True, inplace=True)\n",
+    "\n",
+    "# Step 3: Combine features for testing\n",
+    "test_final = pd.concat(\n",
+    "    [test_processed[['PassengerId', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare']], \n",
+    "     sex_encoded_test, embarked_encoded_test, cabin_encoded_test],\n",
+    "    axis=1\n",
+    ")\n",
+    "\n",
+    "# Step 4: Standardize the numerical features\n",
+    "scaler = StandardScaler()\n",
+    "numerical_features_test = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']\n",
+    "test_final[numerical_features_test] = scaler.fit_transform(test_final[numerical_features_test])\n",
+    "\n",
+    "# Check the result\n",
+    "print(\"Test Data After Processing:\")\n",
+    "print(test_final.head())\n",
+    "\n",
+    "# Save the processed data to a CSV file\n",
+    "test_final.to_csv('test_final.csv', index=False)  # Lưu DataFrame vào tệp CSV"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f4c80db5",
+   "metadata": {
+    "papermill": {
+     "duration": 0.004971,
+     "end_time": "2025-01-18T12:53:02.261789",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:02.256818",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "**Train model**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "90c8c20c",
+   "metadata": {
+    "papermill": {
+     "duration": 0.005112,
+     "end_time": "2025-01-18T12:53:02.272081",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:02.266969",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "**1. Logistic Regression**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "0c434d69",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:02.284007Z",
+     "iopub.status.busy": "2025-01-18T12:53:02.283679Z",
+     "iopub.status.idle": "2025-01-18T12:53:02.406509Z",
+     "shell.execute_reply": "2025-01-18T12:53:02.405371Z"
+    },
+    "papermill": {
+     "duration": 0.130895,
+     "end_time": "2025-01-18T12:53:02.408162",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:02.277267",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Classification Report for Logistic Regression:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.82      0.88      0.85       110\n",
+      "           1       0.79      0.70      0.74        69\n",
+      "\n",
+      "    accuracy                           0.81       179\n",
+      "   macro avg       0.80      0.79      0.79       179\n",
+      "weighted avg       0.81      0.81      0.81       179\n",
+      "\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "0.8100558659217877"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "\n",
+    "# Load the preprocessed train data\n",
+    "train_final = pd.read_csv('/kaggle/working/train_final.csv')\n",
+    "\n",
+    "# Separate features (X) and target (y) from the training dataset\n",
+    "X = train_final.drop(columns=['PassengerId', 'Survived'])\n",
+    "y = train_final['Survived']\n",
+    "\n",
+    "# Split into training and validation sets (80% train, 20% validation)\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n",
+    "\n",
+    "# Initialize and train Logistic Regression model\n",
+    "logreg = LogisticRegression(random_state=42, max_iter=1000)\n",
+    "logreg.fit(X_train, y_train)\n",
+    "\n",
+    "# Predict on validation data to evaluate performance\n",
+    "y_pred_val = logreg.predict(X_val)\n",
+    "\n",
+    "# Calculate accuracy on validation data\n",
+    "accuracy_val = accuracy_score(y_val, y_pred_val)\n",
+    "\n",
+    "# Print classification report for Logistic Regression model\n",
+    "print(f\"Classification Report for Logistic Regression:\")\n",
+    "print(classification_report(y_val, y_pred_val))\n",
+    "\n",
+    "accuracy_val"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6c71b310",
+   "metadata": {
+    "papermill": {
+     "duration": 0.005041,
+     "end_time": "2025-01-18T12:53:02.418708",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:02.413667",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "**2. K-Nearest Neighbors (KNN)**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "3b1a4d86",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:02.431108Z",
+     "iopub.status.busy": "2025-01-18T12:53:02.430664Z",
+     "iopub.status.idle": "2025-01-18T12:53:02.569738Z",
+     "shell.execute_reply": "2025-01-18T12:53:02.568565Z"
+    },
+    "papermill": {
+     "duration": 0.146998,
+     "end_time": "2025-01-18T12:53:02.571283",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:02.424285",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Classification Report for K-Nearest Neighbors:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.79      0.88      0.83       110\n",
+      "           1       0.77      0.62      0.69        69\n",
+      "\n",
+      "    accuracy                           0.78       179\n",
+      "   macro avg       0.78      0.75      0.76       179\n",
+      "weighted avg       0.78      0.78      0.78       179\n",
+      "\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "0.7821229050279329"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "\n",
+    "# Load the preprocessed train data\n",
+    "train_final = pd.read_csv('/kaggle/working/train_final.csv')\n",
+    "\n",
+    "# Separate features (X) and target (y) from the training dataset\n",
+    "X = train_final.drop(columns=['PassengerId', 'Survived'])\n",
+    "y = train_final['Survived']\n",
+    "\n",
+    "# Split into training and validation sets (80% train, 20% validation)\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n",
+    "\n",
+    "# Initialize and train K-Nearest Neighbors model\n",
+    "knn_model = KNeighborsClassifier(n_neighbors=5)\n",
+    "knn_model.fit(X_train, y_train)\n",
+    "\n",
+    "# Predict on validation data to evaluate performance\n",
+    "y_pred_val = knn_model.predict(X_val)\n",
+    "\n",
+    "# Calculate accuracy on validation data\n",
+    "accuracy_val = accuracy_score(y_val, y_pred_val)\n",
+    "\n",
+    "# Print classification report for K-Nearest Neighbors model\n",
+    "print(f\"Classification Report for K-Nearest Neighbors:\")\n",
+    "print(classification_report(y_val, y_pred_val))\n",
+    "\n",
+    "accuracy_val"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b0ed3c56",
+   "metadata": {
+    "papermill": {
+     "duration": 0.005547,
+     "end_time": "2025-01-18T12:53:02.582547",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:02.577000",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "**3. Decision Tree Classifier (CART)**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "e419e628",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:02.598006Z",
+     "iopub.status.busy": "2025-01-18T12:53:02.597498Z",
+     "iopub.status.idle": "2025-01-18T12:53:02.720753Z",
+     "shell.execute_reply": "2025-01-18T12:53:02.719232Z"
+    },
+    "papermill": {
+     "duration": 0.132886,
+     "end_time": "2025-01-18T12:53:02.723123",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:02.590237",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Classification Report for Decision Tree Classifier:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.82      0.85      0.83       110\n",
+      "           1       0.74      0.71      0.73        69\n",
+      "\n",
+      "    accuracy                           0.79       179\n",
+      "   macro avg       0.78      0.78      0.78       179\n",
+      "weighted avg       0.79      0.79      0.79       179\n",
+      "\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "0.7932960893854749"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.tree import DecisionTreeClassifier\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "\n",
+    "# Load the preprocessed train data\n",
+    "train_final = pd.read_csv('/kaggle/working/train_final.csv')\n",
+    "\n",
+    "# Separate features (X) and target (y) from the training dataset\n",
+    "X = train_final.drop(columns=['PassengerId', 'Survived'])\n",
+    "y = train_final['Survived']\n",
+    "\n",
+    "# Split into training and validation sets (80% train, 20% validation)\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n",
+    "\n",
+    "# Initialize and train the Decision Tree model\n",
+    "decision_tree_model = DecisionTreeClassifier(random_state=42)\n",
+    "decision_tree_model.fit(X_train, y_train)\n",
+    "\n",
+    "# Predict on validation data to evaluate performance\n",
+    "y_pred_val = decision_tree_model.predict(X_val)\n",
+    "\n",
+    "# Calculate accuracy on validation data\n",
+    "accuracy_val = accuracy_score(y_val, y_pred_val)\n",
+    "\n",
+    "# Print classification report for Decision Tree model\n",
+    "print(f\"Classification Report for Decision Tree Classifier:\")\n",
+    "print(classification_report(y_val, y_pred_val))\n",
+    "\n",
+    "accuracy_val"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2a2b04f2",
+   "metadata": {
+    "papermill": {
+     "duration": 0.00703,
+     "end_time": "2025-01-18T12:53:02.737574",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:02.730544",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "**4. Random Forest**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "5a4563db",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:02.750840Z",
+     "iopub.status.busy": "2025-01-18T12:53:02.750454Z",
+     "iopub.status.idle": "2025-01-18T12:53:03.186080Z",
+     "shell.execute_reply": "2025-01-18T12:53:03.184881Z"
+    },
+    "papermill": {
+     "duration": 0.444172,
+     "end_time": "2025-01-18T12:53:03.187817",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:02.743645",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Classification Report for Random Forest:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.82      0.85      0.84       110\n",
+      "           1       0.75      0.70      0.72        69\n",
+      "\n",
+      "    accuracy                           0.79       179\n",
+      "   macro avg       0.78      0.78      0.78       179\n",
+      "weighted avg       0.79      0.79      0.79       179\n",
+      "\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "0.7932960893854749"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "\n",
+    "# Load the preprocessed train data\n",
+    "train_final = pd.read_csv('/kaggle/working/train_final.csv')\n",
+    "\n",
+    "# Separate features (X) and target (y) from the training dataset\n",
+    "X = train_final.drop(columns=['PassengerId', 'Survived'])\n",
+    "y = train_final['Survived']\n",
+    "\n",
+    "# Split into training and validation sets (80% train, 20% validation)\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n",
+    "\n",
+    "# Initialize and train the Random Forest model\n",
+    "random_forest_model = RandomForestClassifier(random_state=42, n_estimators=100)\n",
+    "random_forest_model.fit(X_train, y_train)\n",
+    "\n",
+    "# Predict on validation data to evaluate performance\n",
+    "y_pred_val = random_forest_model.predict(X_val)\n",
+    "\n",
+    "# Calculate accuracy on validation data\n",
+    "accuracy_val = accuracy_score(y_val, y_pred_val)\n",
+    "\n",
+    "# Print classification report for Random Forest model\n",
+    "print(f\"Classification Report for Random Forest:\")\n",
+    "print(classification_report(y_val, y_pred_val))\n",
+    "\n",
+    "accuracy_val"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a9b87dc0",
+   "metadata": {
+    "papermill": {
+     "duration": 0.005543,
+     "end_time": "2025-01-18T12:53:03.199728",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:03.194185",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "**5. Gradient Boosting (XGBoost)**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "c37ce631",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:03.212554Z",
+     "iopub.status.busy": "2025-01-18T12:53:03.212159Z",
+     "iopub.status.idle": "2025-01-18T12:53:03.472465Z",
+     "shell.execute_reply": "2025-01-18T12:53:03.471511Z"
+    },
+    "papermill": {
+     "duration": 0.268646,
+     "end_time": "2025-01-18T12:53:03.474108",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:03.205462",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Classification Report for Gradient Boosting:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.80      0.92      0.86       110\n",
+      "           1       0.83      0.64      0.72        69\n",
+      "\n",
+      "    accuracy                           0.81       179\n",
+      "   macro avg       0.82      0.78      0.79       179\n",
+      "weighted avg       0.81      0.81      0.80       179\n",
+      "\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "0.8100558659217877"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.ensemble import GradientBoostingClassifier\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "\n",
+    "# Load the preprocessed train data\n",
+    "train_final = pd.read_csv('/kaggle/working/train_final.csv')\n",
+    "\n",
+    "# Separate features (X) and target (y) from the training dataset\n",
+    "X = train_final.drop(columns=['PassengerId', 'Survived'])\n",
+    "y = train_final['Survived']\n",
+    "\n",
+    "# Split into training and validation sets (80% train, 20% validation)\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n",
+    "\n",
+    "# Initialize the Gradient Boosting model\n",
+    "model = GradientBoostingClassifier(random_state=42)\n",
+    "\n",
+    "# Train the model\n",
+    "model.fit(X_train, y_train)\n",
+    "\n",
+    "# Predict on validation data to evaluate performance\n",
+    "y_pred_val = model.predict(X_val)\n",
+    "\n",
+    "# Calculate accuracy on validation data\n",
+    "accuracy_val = accuracy_score(y_val, y_pred_val)\n",
+    "\n",
+    "# Print classification report for the model\n",
+    "print(f\"Classification Report for Gradient Boosting:\")\n",
+    "print(classification_report(y_val, y_pred_val))\n",
+    "\n",
+    "accuracy_val\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3692c39f",
+   "metadata": {
+    "papermill": {
+     "duration": 0.006275,
+     "end_time": "2025-01-18T12:53:03.486573",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:03.480298",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "Test"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "55e271d8",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:03.500976Z",
+     "iopub.status.busy": "2025-01-18T12:53:03.500583Z",
+     "iopub.status.idle": "2025-01-18T12:53:03.507348Z",
+     "shell.execute_reply": "2025-01-18T12:53:03.505977Z"
+    },
+    "papermill": {
+     "duration": 0.015949,
+     "end_time": "2025-01-18T12:53:03.508970",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:03.493021",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Index(['PassengerId', 'Survived', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare',\n",
+      "       'Sex_male', 'Embarked_Q', 'Embarked_S',\n",
+      "       ...\n",
+      "       'Cabin_E8', 'Cabin_F E69', 'Cabin_F G63', 'Cabin_F G73', 'Cabin_F2',\n",
+      "       'Cabin_F33', 'Cabin_F38', 'Cabin_F4', 'Cabin_G6', 'Cabin_T'],\n",
+      "      dtype='object', length=156)\n",
+      "Index(['PassengerId', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch',\n",
+      "       'Ticket', 'Fare', 'Cabin', 'Embarked'],\n",
+      "      dtype='object')\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(train_final.columns)\n",
+    "print(test_data.columns)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "e24539d3",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:03.522872Z",
+     "iopub.status.busy": "2025-01-18T12:53:03.522525Z",
+     "iopub.status.idle": "2025-01-18T12:53:04.062987Z",
+     "shell.execute_reply": "2025-01-18T12:53:04.061791Z"
+    },
+    "papermill": {
+     "duration": 0.549611,
+     "end_time": "2025-01-18T12:53:04.064912",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:03.515301",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Train columns: Index(['PassengerId', 'Survived', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare',\n",
+      "       'Sex_male', 'Embarked_Q', 'Embarked_S',\n",
+      "       ...\n",
+      "       'Cabin_E8', 'Cabin_F E69', 'Cabin_F G63', 'Cabin_F G73', 'Cabin_F2',\n",
+      "       'Cabin_F33', 'Cabin_F38', 'Cabin_F4', 'Cabin_G6', 'Cabin_T'],\n",
+      "      dtype='object', length=156)\n",
+      "Test columns: Index(['PassengerId', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex_male',\n",
+      "       'Embarked_Q', 'Embarked_S', 'Cabin_A18', 'Cabin_A21', 'Cabin_A29',\n",
+      "       'Cabin_A34', 'Cabin_A9', 'Cabin_B10', 'Cabin_B11', 'Cabin_B24',\n",
+      "       'Cabin_B26', 'Cabin_B36', 'Cabin_B41', 'Cabin_B45', 'Cabin_B51 B53 B55',\n",
+      "       'Cabin_B52 B54 B56', 'Cabin_B57 B59 B63 B66', 'Cabin_B58 B60',\n",
+      "       'Cabin_B61', 'Cabin_B69', 'Cabin_B71', 'Cabin_B78', 'Cabin_C101',\n",
+      "       'Cabin_C105', 'Cabin_C106', 'Cabin_C116', 'Cabin_C130', 'Cabin_C132',\n",
+      "       'Cabin_C22 C26', 'Cabin_C23 C25 C27', 'Cabin_C28', 'Cabin_C31',\n",
+      "       'Cabin_C32', 'Cabin_C39', 'Cabin_C46', 'Cabin_C51', 'Cabin_C53',\n",
+      "       'Cabin_C54', 'Cabin_C55 C57', 'Cabin_C6', 'Cabin_C62 C64', 'Cabin_C7',\n",
+      "       'Cabin_C78', 'Cabin_C80', 'Cabin_C85', 'Cabin_C86', 'Cabin_C89',\n",
+      "       'Cabin_C97', 'Cabin_D', 'Cabin_D10 D12', 'Cabin_D15', 'Cabin_D19',\n",
+      "       'Cabin_D21', 'Cabin_D22', 'Cabin_D28', 'Cabin_D30', 'Cabin_D34',\n",
+      "       'Cabin_D37', 'Cabin_D38', 'Cabin_D40', 'Cabin_D43', 'Cabin_E31',\n",
+      "       'Cabin_E34', 'Cabin_E39 E41', 'Cabin_E45', 'Cabin_E46', 'Cabin_E50',\n",
+      "       'Cabin_E52', 'Cabin_E60', 'Cabin_F', 'Cabin_F E46', 'Cabin_F E57',\n",
+      "       'Cabin_F G63', 'Cabin_F2', 'Cabin_F33', 'Cabin_F4', 'Cabin_G6'],\n",
+      "      dtype='object')\n",
+      "Classification Report for Logistic Regression:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.81      0.89      0.85       110\n",
+      "           1       0.79      0.67      0.72        69\n",
+      "\n",
+      "    accuracy                           0.80       179\n",
+      "   macro avg       0.80      0.78      0.79       179\n",
+      "weighted avg       0.80      0.80      0.80       179\n",
+      "\n",
+      "Classification Report for K-Nearest Neighbors:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.81      0.90      0.85       110\n",
+      "           1       0.81      0.67      0.73        69\n",
+      "\n",
+      "    accuracy                           0.81       179\n",
+      "   macro avg       0.81      0.78      0.79       179\n",
+      "weighted avg       0.81      0.81      0.81       179\n",
+      "\n",
+      "Classification Report for Decision Tree:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.84      0.88      0.86       110\n",
+      "           1       0.79      0.72      0.76        69\n",
+      "\n",
+      "    accuracy                           0.82       179\n",
+      "   macro avg       0.81      0.80      0.81       179\n",
+      "weighted avg       0.82      0.82      0.82       179\n",
+      "\n",
+      "Classification Report for Random Forest:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.83      0.87      0.85       110\n",
+      "           1       0.78      0.72      0.75        69\n",
+      "\n",
+      "    accuracy                           0.82       179\n",
+      "   macro avg       0.81      0.80      0.80       179\n",
+      "weighted avg       0.81      0.82      0.81       179\n",
+      "\n",
+      "Classification Report for Gradient Boosting:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.80      0.89      0.84       110\n",
+      "           1       0.79      0.65      0.71        69\n",
+      "\n",
+      "    accuracy                           0.80       179\n",
+      "   macro avg       0.80      0.77      0.78       179\n",
+      "weighted avg       0.80      0.80      0.79       179\n",
+      "\n",
+      "Submission file saved as 'submission.csv'.\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "from sklearn.tree import DecisionTreeClassifier\n",
+    "from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.compose import ColumnTransformer\n",
+    "from sklearn.pipeline import Pipeline\n",
+    "from sklearn.preprocessing import OneHotEncoder\n",
+    "\n",
+    "# Load the preprocessed train data\n",
+    "train_final = pd.read_csv('/kaggle/working/train_final.csv')\n",
+    "\n",
+    "# Load the preprocessed test data\n",
+    "test_data = pd.read_csv('/kaggle/working/test_final.csv')  # Thay thế bằng đường dẫn thực tế đến dữ liệu kiểm tra\n",
+    "\n",
+    "# Kiểm tra các cột trong train_final và test_data\n",
+    "print(\"Train columns:\", train_final.columns)\n",
+    "print(\"Test columns:\", test_data.columns)\n",
+    "\n",
+    "# Separate features (X) and target (y) from the training dataset\n",
+    "X = train_final.drop(columns=['PassengerId', 'Survived'])\n",
+    "y = train_final['Survived']\n",
+    "\n",
+    "# Xác định các cột số và cột phân loại\n",
+    "numeric_features = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']\n",
+    "categorical_features = ['Sex_male', 'Embarked_Q', 'Embarked_S']  # Sử dụng các cột đã mã hóa\n",
+    "\n",
+    "# Tạo một Pipeline để xử lý dữ liệu\n",
+    "preprocessor = ColumnTransformer(\n",
+    "    transformers=[\n",
+    "        ('num', 'passthrough', numeric_features),  # Giữ nguyên các cột số\n",
+    "        ('cat', 'passthrough', categorical_features)  # Giữ nguyên các cột đã mã hóa\n",
+    "    ])\n",
+    "\n",
+    "# Tạo mô hình với Pipeline\n",
+    "models = {\n",
+    "    'Logistic Regression': Pipeline(steps=[('preprocessor', preprocessor),\n",
+    "                                           ('classifier', LogisticRegression(random_state=42, max_iter=1000))]),\n",
+    "    'K-Nearest Neighbors': Pipeline(steps=[('preprocessor', preprocessor),\n",
+    "                                           ('classifier', KNeighborsClassifier(n_neighbors=5))]),\n",
+    "    'Decision Tree': Pipeline(steps=[('preprocessor', preprocessor),\n",
+    "                                      ('classifier', DecisionTreeClassifier(random_state=42))]),\n",
+    "    'Random Forest': Pipeline(steps=[('preprocessor', preprocessor),\n",
+    "                                      ('classifier', RandomForestClassifier(random_state=42, n_estimators=100))]),\n",
+    "    'Gradient Boosting': Pipeline(steps=[('preprocessor', preprocessor),\n",
+    "                                          ('classifier', GradientBoostingClassifier(random_state=42))])\n",
+    "}\n",
+    "\n",
+    "# Train and evaluate each model on the validation data\n",
+    "results = {}\n",
+    "predictions = {}\n",
+    "\n",
+    "# Split into training and validation sets (80% train, 20% validation)\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n",
+    "\n",
+    "for name, model in models.items():\n",
+    "    # Train the model\n",
+    "    model.fit(X_train, y_train)\n",
+    "    # Predict on validation data to evaluate performance\n",
+    "    y_pred_val = model.predict(X_val)\n",
+    "    # Calculate accuracy on validation data\n",
+    "    accuracy_val = accuracy_score(y_val, y_pred_val)\n",
+    "    results[name] = accuracy_val\n",
+    "\n",
+    "    # Store predictions for the test data\n",
+    "    y_pred_test = model.predict(test_data.drop(columns=['PassengerId']))  # Dự đoán trên dữ liệu kiểm tra\n",
+    "    predictions[name] = y_pred_test\n",
+    "\n",
+    "    # Print classification report for each model\n",
+    "    print(f\"Classification Report for {name}:\")\n",
+    "    print(classification_report(y_val, y_pred_val))\n",
+    "\n",
+    "# Tạo DataFrame cho file nộp kết quả\n",
+    "# Giả sử bạn muốn lưu kết quả dự đoán từ mô hình Logistic Regression\n",
+    "y_pred = predictions['Gradient Boosting']\n",
+    "\n",
+    "# Tạo DataFrame cho file nộp kết quả\n",
+    "submission = pd.DataFrame({\n",
+    "    'PassengerId': test_data['PassengerId'],\n",
+    "    'Survived': y_pred\n",
+    "})\n",
+    "\n",
+    "# Lưu file nộp kết quả\n",
+    "submission.to_csv('submission.csv', index=False)\n",
+    "\n",
+    "# Tải file về máy tính (nếu bạn đang sử dụng Jupyter Notebook hoặc Google Colab)\n",
+    "from IPython.display import FileLink\n",
+    "FileLink(r'submission.csv')\n",
+    "\n",
+    "print(\"Submission file saved as 'submission.csv'.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "b6a2494d",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:04.079888Z",
+     "iopub.status.busy": "2025-01-18T12:53:04.079486Z",
+     "iopub.status.idle": "2025-01-18T12:53:04.772951Z",
+     "shell.execute_reply": "2025-01-18T12:53:04.772012Z"
+    },
+    "papermill": {
+     "duration": 0.703418,
+     "end_time": "2025-01-18T12:53:04.775011",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:04.071593",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Classification Report for XGBoost:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.83      0.85      0.84       110\n",
+      "           1       0.75      0.72      0.74        69\n",
+      "\n",
+      "    accuracy                           0.80       179\n",
+      "   macro avg       0.79      0.79      0.79       179\n",
+      "weighted avg       0.80      0.80      0.80       179\n",
+      "\n",
+      "Validation Accuracy: 0.7988826815642458\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from xgboost import XGBClassifier\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "\n",
+    "# Load the preprocessed train data\n",
+    "train_final = pd.read_csv('/kaggle/working/train_final.csv')\n",
+    "\n",
+    "# Separate features (X) and target (y) from the training dataset\n",
+    "X = train_final.drop(columns=['PassengerId', 'Survived'])\n",
+    "y = train_final['Survived']\n",
+    "\n",
+    "# Split into training and validation sets (80% train, 20% validation)\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n",
+    "\n",
+    "# Initialize the XGBoost model\n",
+    "model = XGBClassifier(random_state=42, use_label_encoder=False, eval_metric='logloss')\n",
+    "\n",
+    "# Train the model\n",
+    "model.fit(X_train, y_train)\n",
+    "\n",
+    "# Predict on validation data to evaluate performance\n",
+    "y_pred_val = model.predict(X_val)\n",
+    "\n",
+    "# Calculate accuracy on validation data\n",
+    "accuracy_val = accuracy_score(y_val, y_pred_val)\n",
+    "\n",
+    "# Print classification report for the model\n",
+    "print(f\"Classification Report for XGBoost:\")\n",
+    "print(classification_report(y_val, y_pred_val))\n",
+    "\n",
+    "print(f\"Validation Accuracy: {accuracy_val}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "f0a754f4",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:04.789428Z",
+     "iopub.status.busy": "2025-01-18T12:53:04.789048Z",
+     "iopub.status.idle": "2025-01-18T12:53:08.329919Z",
+     "shell.execute_reply": "2025-01-18T12:53:08.328692Z"
+    },
+    "papermill": {
+     "duration": 3.550506,
+     "end_time": "2025-01-18T12:53:08.332246",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:04.781740",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[LightGBM] [Warning] Found whitespace in feature_names, replace with underlines\n",
+      "[LightGBM] [Info] Number of positive: 273, number of negative: 439\n",
+      "[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.003999 seconds.\n",
+      "You can set `force_row_wise=true` to remove the overhead.\n",
+      "And if memory is not enough, you can set `force_col_wise=true`.\n",
+      "[LightGBM] [Info] Total Bins 211\n",
+      "[LightGBM] [Info] Number of data points in the train set: 712, number of used features: 9\n",
+      "[LightGBM] [Info] [binary:BoostFromScore]: pavg=0.383427 -> initscore=-0.475028\n",
+      "[LightGBM] [Info] Start training from score -0.475028\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "[LightGBM] [Warning] No further splits with positive gain, best gain: -inf\n",
+      "Classification Report for LightGBM:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.81      0.85      0.83       110\n",
+      "           1       0.73      0.68      0.71        69\n",
+      "\n",
+      "    accuracy                           0.78       179\n",
+      "   macro avg       0.77      0.76      0.77       179\n",
+      "weighted avg       0.78      0.78      0.78       179\n",
+      "\n",
+      "Validation Accuracy: 0.7821229050279329\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from lightgbm import LGBMClassifier\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "\n",
+    "# Load the preprocessed train data\n",
+    "train_final = pd.read_csv('/kaggle/working/train_final.csv')\n",
+    "\n",
+    "# Separate features (X) and target (y) from the training dataset\n",
+    "X = train_final.drop(columns=['PassengerId', 'Survived'])\n",
+    "y = train_final['Survived']\n",
+    "\n",
+    "# Split into training and validation sets (80% train, 20% validation)\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n",
+    "\n",
+    "# Initialize the LightGBM model\n",
+    "model = LGBMClassifier(random_state=42)\n",
+    "\n",
+    "# Train the model\n",
+    "model.fit(X_train, y_train)\n",
+    "\n",
+    "# Predict on validation data to evaluate performance\n",
+    "y_pred_val = model.predict(X_val)\n",
+    "\n",
+    "# Calculate accuracy on validation data\n",
+    "accuracy_val = accuracy_score(y_val, y_pred_val)\n",
+    "\n",
+    "# Print classification report for the model\n",
+    "print(f\"Classification Report for LightGBM:\")\n",
+    "print(classification_report(y_val, y_pred_val))\n",
+    "\n",
+    "print(f\"Validation Accuracy: {accuracy_val}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "3bef730a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:08.347048Z",
+     "iopub.status.busy": "2025-01-18T12:53:08.346666Z",
+     "iopub.status.idle": "2025-01-18T12:53:32.552309Z",
+     "shell.execute_reply": "2025-01-18T12:53:32.551393Z"
+    },
+    "papermill": {
+     "duration": 24.215475,
+     "end_time": "2025-01-18T12:53:32.554614",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:08.339139",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Fitting 3 folds for each of 36 candidates, totalling 108 fits\n",
+      "Classification Report for Best XGBoost Model:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.80      0.88      0.84       110\n",
+      "           1       0.77      0.64      0.70        69\n",
+      "\n",
+      "    accuracy                           0.79       179\n",
+      "   macro avg       0.78      0.76      0.77       179\n",
+      "weighted avg       0.79      0.79      0.78       179\n",
+      "\n",
+      "Validation Accuracy: 0.7877094972067039\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from xgboost import XGBClassifier\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "from sklearn.model_selection import train_test_split, GridSearchCV\n",
+    "\n",
+    "# Load the preprocessed train data\n",
+    "train_final = pd.read_csv('/kaggle/working/train_final.csv')\n",
+    "\n",
+    "# Separate features (X) and target (y) from the training dataset\n",
+    "X = train_final.drop(columns=['PassengerId', 'Survived'])\n",
+    "y = train_final['Survived']\n",
+    "\n",
+    "# Split into training and validation sets (80% train, 20% validation)\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n",
+    "\n",
+    "# Initialize the XGBoost model\n",
+    "model = XGBClassifier(use_label_encoder=False, eval_metric='logloss')\n",
+    "\n",
+    "# Define the parameter grid\n",
+    "param_grid = {\n",
+    "    'n_estimators': [100, 200],\n",
+    "    'max_depth': [3, 5, 7],\n",
+    "    'learning_rate': [0.01, 0.1, 0.2],\n",
+    "    'subsample': [0.8, 1.0]\n",
+    "}\n",
+    "\n",
+    "# Initialize GridSearchCV\n",
+    "grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring='accuracy', cv=3, verbose=1)\n",
+    "\n",
+    "# Train the model with GridSearchCV\n",
+    "grid_search.fit(X_train, y_train)\n",
+    "\n",
+    "# Get the best model\n",
+    "best_model = grid_search.best_estimator_\n",
+    "\n",
+    "# Predict on validation data to evaluate performance\n",
+    "y_pred_val = best_model.predict(X_val)\n",
+    "\n",
+    "# Calculate accuracy on validation data\n",
+    "accuracy_val = accuracy_score(y_val, y_pred_val)\n",
+    "\n",
+    "# Print classification report for the model\n",
+    "print(f\"Classification Report for Best XGBoost Model:\")\n",
+    "print(classification_report(y_val, y_pred_val))\n",
+    "\n",
+    "print(f\"Validation Accuracy: {accuracy_val}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "52d92883",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-18T12:53:32.570047Z",
+     "iopub.status.busy": "2025-01-18T12:53:32.569715Z",
+     "iopub.status.idle": "2025-01-18T12:53:32.713895Z",
+     "shell.execute_reply": "2025-01-18T12:53:32.712414Z"
+    },
+    "papermill": {
+     "duration": 0.154431,
+     "end_time": "2025-01-18T12:53:32.715962",
+     "exception": false,
+     "start_time": "2025-01-18T12:53:32.561531",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Classification Report for SVM:\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.82      0.81      0.81       110\n",
+      "           1       0.70      0.71      0.71        69\n",
+      "\n",
+      "    accuracy                           0.77       179\n",
+      "   macro avg       0.76      0.76      0.76       179\n",
+      "weighted avg       0.77      0.77      0.77       179\n",
+      "\n",
+      "Validation Accuracy: 0.770949720670391\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.svm import SVC\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.preprocessing import StandardScaler\n",
+    "\n",
+    "# Load the preprocessed train data\n",
+    "train_final = pd.read_csv('/kaggle/working/train_final.csv')\n",
+    "\n",
+    "# Separate features (X) and target (y) from the training dataset\n",
+    "X = train_final.drop(columns=['PassengerId', 'Survived'])\n",
+    "y = train_final['Survived']\n",
+    "\n",
+    "# Split into training and validation sets (80% train, 20% validation)\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\n",
+    "\n",
+    "# Standardize the features\n",
+    "scaler = StandardScaler()\n",
+    "X_train = scaler.fit_transform(X_train)\n",
+    "X_val = scaler.transform(X_val)\n",
+    "\n",
+    "# Initialize the SVM model\n",
+    "model = SVC(random_state=42)\n",
+    "\n",
+    "# Train the model\n",
+    "model.fit(X_train, y_train)\n",
+    "\n",
+    "# Predict on validation data to evaluate performance\n",
+    "y_pred_val = model.predict(X_val)\n",
+    "\n",
+    "# Calculate accuracy on validation data\n",
+    "accuracy_val = accuracy_score(y_val, y_pred_val)\n",
+    "\n",
+    "# Print classification report for the model\n",
+    "print(f\"Classification Report for SVM:\")\n",
+    "print(classification_report(y_val, y_pred_val))\n",
+    "\n",
+    "print(f\"Validation Accuracy: {accuracy_val}\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kaggle": {
+   "accelerator": "none",
+   "dataSources": [
+    {
+     "databundleVersionId": 10576436,
+     "sourceId": 90741,
+     "sourceType": "competition"
+    }
+   ],
+   "dockerImageVersionId": 30839,
+   "isGpuEnabled": false,
+   "isInternetEnabled": false,
+   "language": "python",
+   "sourceType": "notebook"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.12"
+  },
+  "papermill": {
+   "default_parameters": {},
+   "duration": 38.883213,
+   "end_time": "2025-01-18T12:53:33.748862",
+   "environment_variables": {},
+   "exception": null,
+   "input_path": "__notebook__.ipynb",
+   "output_path": "__notebook__.ipynb",
+   "parameters": {},
+   "start_time": "2025-01-18T12:52:54.865649",
+   "version": "2.6.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
