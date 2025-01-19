@@ -3,21 +3,21 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "a4e2f9bc",
+   "id": "0472885c",
    "metadata": {
     "_cell_guid": "b1076dfc-b9ad-4769-8c92-a6c4dae69d19",
     "_uuid": "8f2839f25d086af736a60e9eeb907d3b93b6e0e5",
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:52:58.032951Z",
-     "iopub.status.busy": "2025-01-18T12:52:58.032561Z",
-     "iopub.status.idle": "2025-01-18T12:52:59.331526Z",
-     "shell.execute_reply": "2025-01-18T12:52:59.330399Z"
+     "iopub.execute_input": "2025-01-19T03:56:49.707405Z",
+     "iopub.status.busy": "2025-01-19T03:56:49.707047Z",
+     "iopub.status.idle": "2025-01-19T03:56:50.627807Z",
+     "shell.execute_reply": "2025-01-19T03:56:50.626387Z"
     },
     "papermill": {
-     "duration": 1.307885,
-     "end_time": "2025-01-18T12:52:59.333349",
+     "duration": 0.932005,
+     "end_time": "2025-01-19T03:56:50.629638",
      "exception": false,
-     "start_time": "2025-01-18T12:52:58.025464",
+     "start_time": "2025-01-19T03:56:49.697633",
      "status": "completed"
     },
     "tags": []
@@ -55,13 +55,13 @@
   },
   {
    "cell_type": "markdown",
-   "id": "7bb43393",
+   "id": "01d3a68b",
    "metadata": {
     "papermill": {
-     "duration": 0.004839,
-     "end_time": "2025-01-18T12:52:59.344093",
+     "duration": 0.006148,
+     "end_time": "2025-01-19T03:56:50.642711",
      "exception": false,
-     "start_time": "2025-01-18T12:52:59.339254",
+     "start_time": "2025-01-19T03:56:50.636563",
      "status": "completed"
     },
     "tags": []
@@ -73,19 +73,19 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "81b18f72",
+   "id": "178205bf",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:52:59.355544Z",
-     "iopub.status.busy": "2025-01-18T12:52:59.355020Z",
-     "iopub.status.idle": "2025-01-18T12:53:02.157574Z",
-     "shell.execute_reply": "2025-01-18T12:53:02.156165Z"
+     "iopub.execute_input": "2025-01-19T03:56:50.656971Z",
+     "iopub.status.busy": "2025-01-19T03:56:50.656416Z",
+     "iopub.status.idle": "2025-01-19T03:56:52.519937Z",
+     "shell.execute_reply": "2025-01-19T03:56:52.518447Z"
     },
     "papermill": {
-     "duration": 2.81055,
-     "end_time": "2025-01-18T12:53:02.159599",
+     "duration": 1.872683,
+     "end_time": "2025-01-19T03:56:52.521758",
      "exception": false,
-     "start_time": "2025-01-18T12:52:59.349049",
+     "start_time": "2025-01-19T03:56:50.649075",
      "status": "completed"
     },
     "tags": []
@@ -188,19 +188,19 @@
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "608eb20d",
+   "id": "f5fd929b",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:02.171222Z",
-     "iopub.status.busy": "2025-01-18T12:53:02.170892Z",
-     "iopub.status.idle": "2025-01-18T12:53:02.249455Z",
-     "shell.execute_reply": "2025-01-18T12:53:02.248226Z"
+     "iopub.execute_input": "2025-01-19T03:56:52.536073Z",
+     "iopub.status.busy": "2025-01-19T03:56:52.535728Z",
+     "iopub.status.idle": "2025-01-19T03:56:52.617212Z",
+     "shell.execute_reply": "2025-01-19T03:56:52.616119Z"
     },
     "papermill": {
-     "duration": 0.086732,
-     "end_time": "2025-01-18T12:53:02.251536",
+     "duration": 0.091088,
+     "end_time": "2025-01-19T03:56:52.619436",
      "exception": false,
-     "start_time": "2025-01-18T12:53:02.164804",
+     "start_time": "2025-01-19T03:56:52.528348",
      "status": "completed"
     },
     "tags": []
@@ -309,13 +309,13 @@
   },
   {
    "cell_type": "markdown",
-   "id": "f4c80db5",
+   "id": "98b2c24b",
    "metadata": {
     "papermill": {
-     "duration": 0.004971,
-     "end_time": "2025-01-18T12:53:02.261789",
+     "duration": 0.006664,
+     "end_time": "2025-01-19T03:56:52.632849",
      "exception": false,
-     "start_time": "2025-01-18T12:53:02.256818",
+     "start_time": "2025-01-19T03:56:52.626185",
      "status": "completed"
     },
     "tags": []
@@ -326,13 +326,13 @@
   },
   {
    "cell_type": "markdown",
-   "id": "90c8c20c",
+   "id": "34c54110",
    "metadata": {
     "papermill": {
-     "duration": 0.005112,
-     "end_time": "2025-01-18T12:53:02.272081",
+     "duration": 0.006176,
+     "end_time": "2025-01-19T03:56:52.645545",
      "exception": false,
-     "start_time": "2025-01-18T12:53:02.266969",
+     "start_time": "2025-01-19T03:56:52.639369",
      "status": "completed"
     },
     "tags": []
@@ -344,19 +344,19 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "0c434d69",
+   "id": "10454ae7",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:02.284007Z",
-     "iopub.status.busy": "2025-01-18T12:53:02.283679Z",
-     "iopub.status.idle": "2025-01-18T12:53:02.406509Z",
-     "shell.execute_reply": "2025-01-18T12:53:02.405371Z"
+     "iopub.execute_input": "2025-01-19T03:56:52.659801Z",
+     "iopub.status.busy": "2025-01-19T03:56:52.659320Z",
+     "iopub.status.idle": "2025-01-19T03:56:52.737013Z",
+     "shell.execute_reply": "2025-01-19T03:56:52.735853Z"
     },
     "papermill": {
-     "duration": 0.130895,
-     "end_time": "2025-01-18T12:53:02.408162",
+     "duration": 0.086702,
+     "end_time": "2025-01-19T03:56:52.738678",
      "exception": false,
-     "start_time": "2025-01-18T12:53:02.277267",
+     "start_time": "2025-01-19T03:56:52.651976",
      "status": "completed"
     },
     "tags": []
@@ -424,13 +424,13 @@
   },
   {
    "cell_type": "markdown",
-   "id": "6c71b310",
+   "id": "c707dd91",
    "metadata": {
     "papermill": {
-     "duration": 0.005041,
-     "end_time": "2025-01-18T12:53:02.418708",
+     "duration": 0.006439,
+     "end_time": "2025-01-19T03:56:52.752142",
      "exception": false,
-     "start_time": "2025-01-18T12:53:02.413667",
+     "start_time": "2025-01-19T03:56:52.745703",
      "status": "completed"
     },
     "tags": []
@@ -442,19 +442,19 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "3b1a4d86",
+   "id": "0844b7fd",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:02.431108Z",
-     "iopub.status.busy": "2025-01-18T12:53:02.430664Z",
-     "iopub.status.idle": "2025-01-18T12:53:02.569738Z",
-     "shell.execute_reply": "2025-01-18T12:53:02.568565Z"
+     "iopub.execute_input": "2025-01-19T03:56:52.767003Z",
+     "iopub.status.busy": "2025-01-19T03:56:52.766602Z",
+     "iopub.status.idle": "2025-01-19T03:56:52.866267Z",
+     "shell.execute_reply": "2025-01-19T03:56:52.865294Z"
     },
     "papermill": {
-     "duration": 0.146998,
-     "end_time": "2025-01-18T12:53:02.571283",
+     "duration": 0.1089,
+     "end_time": "2025-01-19T03:56:52.867795",
      "exception": false,
-     "start_time": "2025-01-18T12:53:02.424285",
+     "start_time": "2025-01-19T03:56:52.758895",
      "status": "completed"
     },
     "tags": []
@@ -522,13 +522,13 @@
   },
   {
    "cell_type": "markdown",
-   "id": "b0ed3c56",
+   "id": "eacb3334",
    "metadata": {
     "papermill": {
-     "duration": 0.005547,
-     "end_time": "2025-01-18T12:53:02.582547",
+     "duration": 0.006499,
+     "end_time": "2025-01-19T03:56:52.881294",
      "exception": false,
-     "start_time": "2025-01-18T12:53:02.577000",
+     "start_time": "2025-01-19T03:56:52.874795",
      "status": "completed"
     },
     "tags": []
@@ -540,19 +540,19 @@
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "e419e628",
+   "id": "016ca43f",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:02.598006Z",
-     "iopub.status.busy": "2025-01-18T12:53:02.597498Z",
-     "iopub.status.idle": "2025-01-18T12:53:02.720753Z",
-     "shell.execute_reply": "2025-01-18T12:53:02.719232Z"
+     "iopub.execute_input": "2025-01-19T03:56:52.896407Z",
+     "iopub.status.busy": "2025-01-19T03:56:52.896026Z",
+     "iopub.status.idle": "2025-01-19T03:56:52.988868Z",
+     "shell.execute_reply": "2025-01-19T03:56:52.987628Z"
     },
     "papermill": {
-     "duration": 0.132886,
-     "end_time": "2025-01-18T12:53:02.723123",
+     "duration": 0.102342,
+     "end_time": "2025-01-19T03:56:52.990548",
      "exception": false,
-     "start_time": "2025-01-18T12:53:02.590237",
+     "start_time": "2025-01-19T03:56:52.888206",
      "status": "completed"
     },
     "tags": []
@@ -620,13 +620,13 @@
   },
   {
    "cell_type": "markdown",
-   "id": "2a2b04f2",
+   "id": "74801c30",
    "metadata": {
     "papermill": {
-     "duration": 0.00703,
-     "end_time": "2025-01-18T12:53:02.737574",
+     "duration": 0.006925,
+     "end_time": "2025-01-19T03:56:53.004604",
      "exception": false,
-     "start_time": "2025-01-18T12:53:02.730544",
+     "start_time": "2025-01-19T03:56:52.997679",
      "status": "completed"
     },
     "tags": []
@@ -638,19 +638,19 @@
   {
    "cell_type": "code",
    "execution_count": 7,
-   "id": "5a4563db",
+   "id": "c0fdc779",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:02.750840Z",
-     "iopub.status.busy": "2025-01-18T12:53:02.750454Z",
-     "iopub.status.idle": "2025-01-18T12:53:03.186080Z",
-     "shell.execute_reply": "2025-01-18T12:53:03.184881Z"
+     "iopub.execute_input": "2025-01-19T03:56:53.019781Z",
+     "iopub.status.busy": "2025-01-19T03:56:53.019390Z",
+     "iopub.status.idle": "2025-01-19T03:56:53.413127Z",
+     "shell.execute_reply": "2025-01-19T03:56:53.411943Z"
     },
     "papermill": {
-     "duration": 0.444172,
-     "end_time": "2025-01-18T12:53:03.187817",
+     "duration": 0.403653,
+     "end_time": "2025-01-19T03:56:53.415219",
      "exception": false,
-     "start_time": "2025-01-18T12:53:02.743645",
+     "start_time": "2025-01-19T03:56:53.011566",
      "status": "completed"
     },
     "tags": []
@@ -718,13 +718,13 @@
   },
   {
    "cell_type": "markdown",
-   "id": "a9b87dc0",
+   "id": "350e5589",
    "metadata": {
     "papermill": {
-     "duration": 0.005543,
-     "end_time": "2025-01-18T12:53:03.199728",
+     "duration": 0.006978,
+     "end_time": "2025-01-19T03:56:53.429571",
      "exception": false,
-     "start_time": "2025-01-18T12:53:03.194185",
+     "start_time": "2025-01-19T03:56:53.422593",
      "status": "completed"
     },
     "tags": []
@@ -736,19 +736,19 @@
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "c37ce631",
+   "id": "a7635653",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:03.212554Z",
-     "iopub.status.busy": "2025-01-18T12:53:03.212159Z",
-     "iopub.status.idle": "2025-01-18T12:53:03.472465Z",
-     "shell.execute_reply": "2025-01-18T12:53:03.471511Z"
+     "iopub.execute_input": "2025-01-19T03:56:53.445543Z",
+     "iopub.status.busy": "2025-01-19T03:56:53.445170Z",
+     "iopub.status.idle": "2025-01-19T03:56:53.698041Z",
+     "shell.execute_reply": "2025-01-19T03:56:53.696981Z"
     },
     "papermill": {
-     "duration": 0.268646,
-     "end_time": "2025-01-18T12:53:03.474108",
+     "duration": 0.262444,
+     "end_time": "2025-01-19T03:56:53.699496",
      "exception": false,
-     "start_time": "2025-01-18T12:53:03.205462",
+     "start_time": "2025-01-19T03:56:53.437052",
      "status": "completed"
     },
     "tags": []
@@ -818,13 +818,13 @@
   },
   {
    "cell_type": "markdown",
-   "id": "3692c39f",
+   "id": "8a8760ec",
    "metadata": {
     "papermill": {
-     "duration": 0.006275,
-     "end_time": "2025-01-18T12:53:03.486573",
+     "duration": 0.006936,
+     "end_time": "2025-01-19T03:56:53.713865",
      "exception": false,
-     "start_time": "2025-01-18T12:53:03.480298",
+     "start_time": "2025-01-19T03:56:53.706929",
      "status": "completed"
     },
     "tags": []
@@ -836,19 +836,19 @@
   {
    "cell_type": "code",
    "execution_count": 9,
-   "id": "55e271d8",
+   "id": "09129e27",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:03.500976Z",
-     "iopub.status.busy": "2025-01-18T12:53:03.500583Z",
-     "iopub.status.idle": "2025-01-18T12:53:03.507348Z",
-     "shell.execute_reply": "2025-01-18T12:53:03.505977Z"
+     "iopub.execute_input": "2025-01-19T03:56:53.730107Z",
+     "iopub.status.busy": "2025-01-19T03:56:53.729742Z",
+     "iopub.status.idle": "2025-01-19T03:56:53.735667Z",
+     "shell.execute_reply": "2025-01-19T03:56:53.734345Z"
     },
     "papermill": {
-     "duration": 0.015949,
-     "end_time": "2025-01-18T12:53:03.508970",
+     "duration": 0.016003,
+     "end_time": "2025-01-19T03:56:53.737352",
      "exception": false,
-     "start_time": "2025-01-18T12:53:03.493021",
+     "start_time": "2025-01-19T03:56:53.721349",
      "status": "completed"
     },
     "tags": []
@@ -878,19 +878,19 @@
   {
    "cell_type": "code",
    "execution_count": 10,
-   "id": "e24539d3",
+   "id": "c149298f",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:03.522872Z",
-     "iopub.status.busy": "2025-01-18T12:53:03.522525Z",
-     "iopub.status.idle": "2025-01-18T12:53:04.062987Z",
-     "shell.execute_reply": "2025-01-18T12:53:04.061791Z"
+     "iopub.execute_input": "2025-01-19T03:56:53.754335Z",
+     "iopub.status.busy": "2025-01-19T03:56:53.754006Z",
+     "iopub.status.idle": "2025-01-19T03:56:54.256139Z",
+     "shell.execute_reply": "2025-01-19T03:56:54.255166Z"
     },
     "papermill": {
-     "duration": 0.549611,
-     "end_time": "2025-01-18T12:53:04.064912",
+     "duration": 0.513026,
+     "end_time": "2025-01-19T03:56:54.258272",
      "exception": false,
-     "start_time": "2025-01-18T12:53:03.515301",
+     "start_time": "2025-01-19T03:56:53.745246",
      "status": "completed"
     },
     "tags": []
@@ -1076,19 +1076,19 @@
   {
    "cell_type": "code",
    "execution_count": 11,
-   "id": "b6a2494d",
+   "id": "4b475f8f",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:04.079888Z",
-     "iopub.status.busy": "2025-01-18T12:53:04.079486Z",
-     "iopub.status.idle": "2025-01-18T12:53:04.772951Z",
-     "shell.execute_reply": "2025-01-18T12:53:04.772012Z"
+     "iopub.execute_input": "2025-01-19T03:56:54.278832Z",
+     "iopub.status.busy": "2025-01-19T03:56:54.278424Z",
+     "iopub.status.idle": "2025-01-19T03:56:54.788212Z",
+     "shell.execute_reply": "2025-01-19T03:56:54.787010Z"
     },
     "papermill": {
-     "duration": 0.703418,
-     "end_time": "2025-01-18T12:53:04.775011",
+     "duration": 0.52136,
+     "end_time": "2025-01-19T03:56:54.789935",
      "exception": false,
-     "start_time": "2025-01-18T12:53:04.071593",
+     "start_time": "2025-01-19T03:56:54.268575",
      "status": "completed"
     },
     "tags": []
@@ -1150,19 +1150,19 @@
   {
    "cell_type": "code",
    "execution_count": 12,
-   "id": "f0a754f4",
+   "id": "245a416e",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:04.789428Z",
-     "iopub.status.busy": "2025-01-18T12:53:04.789048Z",
-     "iopub.status.idle": "2025-01-18T12:53:08.329919Z",
-     "shell.execute_reply": "2025-01-18T12:53:08.328692Z"
+     "iopub.execute_input": "2025-01-19T03:56:54.808020Z",
+     "iopub.status.busy": "2025-01-19T03:56:54.807581Z",
+     "iopub.status.idle": "2025-01-19T03:56:57.890550Z",
+     "shell.execute_reply": "2025-01-19T03:56:57.888950Z"
     },
     "papermill": {
-     "duration": 3.550506,
-     "end_time": "2025-01-18T12:53:08.332246",
+     "duration": 3.094568,
+     "end_time": "2025-01-19T03:56:57.892477",
      "exception": false,
-     "start_time": "2025-01-18T12:53:04.781740",
+     "start_time": "2025-01-19T03:56:54.797909",
      "status": "completed"
     },
     "tags": []
@@ -1174,7 +1174,7 @@
      "text": [
       "[LightGBM] [Warning] Found whitespace in feature_names, replace with underlines\n",
       "[LightGBM] [Info] Number of positive: 273, number of negative: 439\n",
-      "[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.003999 seconds.\n",
+      "[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.002782 seconds.\n",
       "You can set `force_row_wise=true` to remove the overhead.\n",
       "And if memory is not enough, you can set `force_col_wise=true`.\n",
       "[LightGBM] [Info] Total Bins 211\n",
@@ -1321,19 +1321,19 @@
   {
    "cell_type": "code",
    "execution_count": 13,
-   "id": "3bef730a",
+   "id": "0e7d3008",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:08.347048Z",
-     "iopub.status.busy": "2025-01-18T12:53:08.346666Z",
-     "iopub.status.idle": "2025-01-18T12:53:32.552309Z",
-     "shell.execute_reply": "2025-01-18T12:53:32.551393Z"
+     "iopub.execute_input": "2025-01-19T03:56:57.909986Z",
+     "iopub.status.busy": "2025-01-19T03:56:57.909547Z",
+     "iopub.status.idle": "2025-01-19T03:57:21.501481Z",
+     "shell.execute_reply": "2025-01-19T03:57:21.500332Z"
     },
     "papermill": {
-     "duration": 24.215475,
-     "end_time": "2025-01-18T12:53:32.554614",
+     "duration": 23.60267,
+     "end_time": "2025-01-19T03:57:21.503372",
      "exception": false,
-     "start_time": "2025-01-18T12:53:08.339139",
+     "start_time": "2025-01-19T03:56:57.900702",
      "status": "completed"
     },
     "tags": []
@@ -1410,19 +1410,19 @@
   {
    "cell_type": "code",
    "execution_count": 14,
-   "id": "52d92883",
+   "id": "db924f46",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-01-18T12:53:32.570047Z",
-     "iopub.status.busy": "2025-01-18T12:53:32.569715Z",
-     "iopub.status.idle": "2025-01-18T12:53:32.713895Z",
-     "shell.execute_reply": "2025-01-18T12:53:32.712414Z"
+     "iopub.execute_input": "2025-01-19T03:57:21.521118Z",
+     "iopub.status.busy": "2025-01-19T03:57:21.520736Z",
+     "iopub.status.idle": "2025-01-19T03:57:21.628694Z",
+     "shell.execute_reply": "2025-01-19T03:57:21.627414Z"
     },
     "papermill": {
-     "duration": 0.154431,
-     "end_time": "2025-01-18T12:53:32.715962",
+     "duration": 0.118717,
+     "end_time": "2025-01-19T03:57:21.630446",
      "exception": false,
-     "start_time": "2025-01-18T12:53:32.561531",
+     "start_time": "2025-01-19T03:57:21.511729",
      "status": "completed"
     },
     "tags": []
@@ -1486,6 +1486,517 @@
     "\n",
     "print(f\"Validation Accuracy: {accuracy_val}\")"
    ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "86b8ee8d",
+   "metadata": {
+    "papermill": {
+     "duration": 0.007761,
+     "end_time": "2025-01-19T03:57:21.646565",
+     "exception": false,
+     "start_time": "2025-01-19T03:57:21.638804",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "# **Test không có cột cain**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "4634e539",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-19T03:57:21.664194Z",
+     "iopub.status.busy": "2025-01-19T03:57:21.663812Z",
+     "iopub.status.idle": "2025-01-19T03:57:21.693257Z",
+     "shell.execute_reply": "2025-01-19T03:57:21.691846Z"
+    },
+    "papermill": {
+     "duration": 0.040688,
+     "end_time": "2025-01-19T03:57:21.695235",
+     "exception": false,
+     "start_time": "2025-01-19T03:57:21.654547",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "   PassengerId  Survived  Pclass   Age  SibSp  Parch     Fare  Sex_male  \\\n",
+      "0            1         0       3  22.0      1      0   7.2500      True   \n",
+      "1            2         1       1  38.0      1      0  71.2833     False   \n",
+      "2            3         1       3  26.0      0      0   7.9250     False   \n",
+      "3            4         1       1  35.0      1      0  53.1000     False   \n",
+      "4            5         0       3  35.0      0      0   8.0500      True   \n",
+      "\n",
+      "   Embarked_Q  Embarked_S  \n",
+      "0       False        True  \n",
+      "1       False       False  \n",
+      "2       False        True  \n",
+      "3       False        True  \n",
+      "4       False        True  \n",
+      "[[ 0.82737724 -0.56573646  0.43279337 -0.47367361 -0.50244517  0.73769513\n",
+      "  -0.30756234  0.61583843]\n",
+      " [-1.56610693  0.66386103  0.43279337 -0.47367361  0.78684529 -1.35557354\n",
+      "  -0.30756234 -1.62380254]\n",
+      " [ 0.82737724 -0.25833709 -0.4745452  -0.47367361 -0.48885426 -1.35557354\n",
+      "  -0.30756234  0.61583843]\n",
+      " [-1.56610693  0.4333115   0.43279337 -0.47367361  0.42073024 -1.35557354\n",
+      "  -0.30756234  0.61583843]\n",
+      " [ 0.82737724  0.4333115  -0.4745452  -0.47367361 -0.48633742  0.73769513\n",
+      "  -0.30756234  0.61583843]]\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.preprocessing import StandardScaler\n",
+    "\n",
+    "# Đọc dữ liệu từ file CSV\n",
+    "train_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/train.csv')\n",
+    "\n",
+    "# Xử lý giá trị thiếu\n",
+    "train_data['Age'] = train_data['Age'].fillna(train_data['Age'].median())\n",
+    "train_data['Embarked'] = train_data['Embarked'].fillna(train_data['Embarked'].mode()[0])\n",
+    "train_data['Fare'] = train_data['Fare'].fillna(train_data['Fare'].median())\n",
+    "\n",
+    "# Chuyển đổi các biến phân loại thành số\n",
+    "train_data = pd.get_dummies(train_data, columns=['Sex', 'Embarked'], drop_first=True)\n",
+    "\n",
+    "# Loại bỏ các cột không cần thiết\n",
+    "train_data.drop(columns=['Name', 'Ticket', 'Cabin'], inplace=True)\n",
+    "\n",
+    "# Tách dữ liệu thành các đặc trưng và biến mục tiêu\n",
+    "X = train_data.drop(columns=['Survived', 'PassengerId'])\n",
+    "y = train_data['Survived']\n",
+    "\n",
+    "# Chuẩn hóa các đặc trưng\n",
+    "scaler = StandardScaler()\n",
+    "X = scaler.fit_transform(X)\n",
+    "\n",
+    "# Hiển thị một vài dòng đầu tiên của dữ liệu đã xử lý để kiểm tra\n",
+    "print(train_data.head())\n",
+    "print(X[:5])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "f107e800",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-19T03:57:21.713437Z",
+     "iopub.status.busy": "2025-01-19T03:57:21.713095Z",
+     "iopub.status.idle": "2025-01-19T03:57:22.037740Z",
+     "shell.execute_reply": "2025-01-19T03:57:22.036394Z"
+    },
+    "papermill": {
+     "duration": 0.335745,
+     "end_time": "2025-01-19T03:57:22.039593",
+     "exception": false,
+     "start_time": "2025-01-19T03:57:21.703848",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Logistic Regression Accuracy: 0.7877094972067039\n",
+      "Decision Tree Classifier Accuracy: 0.8044692737430168\n",
+      "Random Forest Classifier Accuracy: 0.8379888268156425\n",
+      "Support Vector Classifier Accuracy: 0.770949720670391\n",
+      "K-Nearest Neighbors Classifier Accuracy: 0.8044692737430168\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn.tree import DecisionTreeClassifier\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "from sklearn.svm import SVC\n",
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "from sklearn.metrics import accuracy_score\n",
+    "\n",
+    "# Hàm để huấn luyện và đánh giá mô hình\n",
+    "def train_and_evaluate_model(model, model_name):\n",
+    "    model.fit(X_train, y_train)\n",
+    "    y_pred = model.predict(X_val)\n",
+    "    accuracy = accuracy_score(y_val, y_pred)\n",
+    "    print(f\"{model_name} Accuracy: {accuracy}\")\n",
+    "    return model\n",
+    "\n",
+    "# Huấn luyện và đánh giá các mô hình khác nhau\n",
+    "\n",
+    "# Logistic Regression\n",
+    "logreg = LogisticRegression()\n",
+    "logreg_model = train_and_evaluate_model(logreg, \"Logistic Regression\")\n",
+    "\n",
+    "# Decision Tree Classifier\n",
+    "dtree = DecisionTreeClassifier()\n",
+    "dtree_model = train_and_evaluate_model(dtree, \"Decision Tree Classifier\")\n",
+    "\n",
+    "# Random Forest Classifier\n",
+    "rf = RandomForestClassifier()\n",
+    "rf_model = train_and_evaluate_model(rf, \"Random Forest Classifier\")\n",
+    "\n",
+    "# Support Vector Classifier\n",
+    "svc = SVC()\n",
+    "svc_model = train_and_evaluate_model(svc, \"Support Vector Classifier\")\n",
+    "\n",
+    "# K-Nearest Neighbors Classifier\n",
+    "knn = KNeighborsClassifier()\n",
+    "knn_model = train_and_evaluate_model(knn, \"K-Nearest Neighbors Classifier\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "05bf751a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-19T03:57:22.058377Z",
+     "iopub.status.busy": "2025-01-19T03:57:22.058038Z",
+     "iopub.status.idle": "2025-01-19T03:57:22.393555Z",
+     "shell.execute_reply": "2025-01-19T03:57:22.392318Z"
+    },
+    "papermill": {
+     "duration": 0.346996,
+     "end_time": "2025-01-19T03:57:22.395254",
+     "exception": false,
+     "start_time": "2025-01-19T03:57:22.048258",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Logistic Regression Accuracy: 0.8100558659217877\n",
+      "Decision Tree Classifier Accuracy: 0.7877094972067039\n",
+      "Random Forest Classifier Accuracy: 0.7988826815642458\n",
+      "Support Vector Classifier Accuracy: 0.8100558659217877\n",
+      "K-Nearest Neighbors Classifier Accuracy: 0.8044692737430168\n",
+      "Submission file for Logistic_Regression created successfully.\n",
+      "Submission file for Decision_Tree_Classifier created successfully.\n",
+      "Submission file for Random_Forest_Classifier created successfully.\n",
+      "Submission file for Support_Vector_Classifier created successfully.\n",
+      "Submission file for K_Nearest_Neighbors_Classifier created successfully.\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.preprocessing import StandardScaler\n",
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn.tree import DecisionTreeClassifier\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "from sklearn.svm import SVC\n",
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "from sklearn.metrics import accuracy_score\n",
+    "\n",
+    "# Đọc dữ liệu từ file CSV\n",
+    "train_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/train.csv')\n",
+    "\n",
+    "# Xử lý giá trị thiếu\n",
+    "train_data['Age'] = train_data['Age'].fillna(train_data['Age'].median())\n",
+    "train_data['Embarked'] = train_data['Embarked'].fillna(train_data['Embarked'].mode()[0])\n",
+    "train_data['Fare'] = train_data['Fare'].fillna(train_data['Fare'].median())\n",
+    "\n",
+    "# Chuyển đổi các biến phân loại thành số\n",
+    "train_data = pd.get_dummies(train_data, columns=['Sex', 'Embarked'], drop_first=True)\n",
+    "\n",
+    "# Loại bỏ các cột không cần thiết\n",
+    "train_data.drop(columns=['Name', 'Ticket', 'Cabin'], inplace=True)\n",
+    "\n",
+    "# Tách dữ liệu thành các đặc trưng và biến mục tiêu\n",
+    "X = train_data.drop(columns=['Survived', 'PassengerId'])\n",
+    "y = train_data['Survived']\n",
+    "\n",
+    "# Chuẩn hóa các đặc trưng\n",
+    "scaler = StandardScaler()\n",
+    "X = scaler.fit_transform(X)\n",
+    "\n",
+    "# Tách dữ liệu thành tập huấn luyện và tập kiểm tra\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)\n",
+    "\n",
+    "# Hàm để huấn luyện và đánh giá mô hình\n",
+    "def train_and_evaluate_model(model, model_name):\n",
+    "    model.fit(X_train, y_train)\n",
+    "    y_pred = model.predict(X_val)\n",
+    "    accuracy = accuracy_score(y_val, y_pred)\n",
+    "    print(f\"{model_name} Accuracy: {accuracy}\")\n",
+    "    return model\n",
+    "\n",
+    "# Huấn luyện và đánh giá các mô hình khác nhau\n",
+    "\n",
+    "# Logistic Regression (tăng số lượng vòng lặp tối đa)\n",
+    "logreg = LogisticRegression(max_iter=1000)\n",
+    "logreg_model = train_and_evaluate_model(logreg, \"Logistic Regression\")\n",
+    "\n",
+    "# Decision Tree Classifier\n",
+    "dtree = DecisionTreeClassifier()\n",
+    "dtree_model = train_and_evaluate_model(dtree, \"Decision Tree Classifier\")\n",
+    "\n",
+    "# Random Forest Classifier\n",
+    "rf = RandomForestClassifier()\n",
+    "rf_model = train_and_evaluate_model(rf, \"Random Forest Classifier\")\n",
+    "\n",
+    "# Support Vector Classifier\n",
+    "svc = SVC()\n",
+    "svc_model = train_and_evaluate_model(svc, \"Support Vector Classifier\")\n",
+    "\n",
+    "# K-Nearest Neighbors Classifier\n",
+    "knn = KNeighborsClassifier()\n",
+    "knn_model = train_and_evaluate_model(knn, \"K-Nearest Neighbors Classifier\")\n",
+    "\n",
+    "# Đọc dữ liệu test từ file CSV\n",
+    "test_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/test.csv')\n",
+    "\n",
+    "# Xử lý giá trị thiếu trong dữ liệu test\n",
+    "test_data['Age'] = test_data['Age'].fillna(test_data['Age'].median())\n",
+    "test_data['Embarked'] = test_data['Embarked'].fillna(test_data['Embarked'].mode()[0])\n",
+    "test_data['Fare'] = test_data['Fare'].fillna(test_data['Fare'].median())\n",
+    "\n",
+    "# Chuyển đổi các biến phân loại thành số trong dữ liệu test\n",
+    "test_data = pd.get_dummies(test_data, columns=['Sex', 'Embarked'], drop_first=True)\n",
+    "\n",
+    "# Đảm bảo rằng dữ liệu test có cùng các cột với dữ liệu huấn luyện\n",
+    "missing_cols = set(train_data.columns) - set(test_data.columns)\n",
+    "for col in missing_cols:\n",
+    "    test_data[col] = 0\n",
+    "test_data = test_data[train_data.columns.drop(['Survived', 'PassengerId'])]\n",
+    "\n",
+    "# Chuẩn hóa dữ liệu test\n",
+    "X_test = scaler.transform(test_data)\n",
+    "\n",
+    "# Hàm để tạo file submission từ mô hình đã huấn luyện\n",
+    "def create_submission_file(model, model_name):\n",
+    "    predictions = model.predict(X_test)\n",
+    "    submission = pd.DataFrame({'PassengerId': test_data.index + 892, 'Survived': predictions})\n",
+    "    submission.to_csv(f'submission_{model_name}.csv', index=False)\n",
+    "    print(f\"Submission file for {model_name} created successfully.\")\n",
+    "\n",
+    "# Tạo file submission cho từng mô hình\n",
+    "\n",
+    "create_submission_file(logreg_model, \"Logistic_Regression\")\n",
+    "create_submission_file(dtree_model, \"Decision_Tree_Classifier\")\n",
+    "create_submission_file(rf_model, \"Random_Forest_Classifier\")\n",
+    "create_submission_file(svc_model, \"Support_Vector_Classifier\")\n",
+    "create_submission_file(knn_model, \"K_Nearest_Neighbors_Classifier\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "d54dc1a2",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-19T03:57:22.414118Z",
+     "iopub.status.busy": "2025-01-19T03:57:22.413769Z",
+     "iopub.status.idle": "2025-01-19T03:57:22.455154Z",
+     "shell.execute_reply": "2025-01-19T03:57:22.453946Z"
+    },
+    "papermill": {
+     "duration": 0.053085,
+     "end_time": "2025-01-19T03:57:22.457245",
+     "exception": false,
+     "start_time": "2025-01-19T03:57:22.404160",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.preprocessing import StandardScaler\n",
+    "\n",
+    "# Đọc dữ liệu từ file CSV\n",
+    "train_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/train.csv')\n",
+    "test_data = pd.read_csv('/kaggle/input/2024-hk-1-se-355-p-11-titanic-classification/test.csv')\n",
+    "\n",
+    "# Xử lý giá trị thiếu trong dữ liệu huấn luyện\n",
+    "train_data['Age'] = train_data['Age'].fillna(train_data['Age'].median())\n",
+    "train_data['Embarked'] = train_data['Embarked'].fillna(train_data['Embarked'].mode()[0])\n",
+    "train_data['Fare'] = train_data['Fare'].fillna(train_data['Fare'].median())\n",
+    "\n",
+    "# Tạo thêm đặc trưng mới trong dữ liệu huấn luyện\n",
+    "train_data['FamilySize'] = train_data['SibSp'] + train_data['Parch'] + 1\n",
+    "train_data['IsAlone'] = (train_data['FamilySize'] == 1).astype(int)\n",
+    "\n",
+    "# Chuyển đổi các biến phân loại thành số trong dữ liệu huấn luyện\n",
+    "train_data = pd.get_dummies(train_data, columns=['Sex', 'Embarked'], drop_first=True)\n",
+    "\n",
+    "# Loại bỏ các cột không cần thiết trong dữ liệu huấn luyện\n",
+    "train_data.drop(columns=['Name', 'Ticket', 'Cabin'], inplace=True)\n",
+    "\n",
+    "# Tách dữ liệu thành các đặc trưng và biến mục tiêu trong dữ liệu huấn luyện\n",
+    "X = train_data.drop(columns=['Survived', 'PassengerId'])\n",
+    "y = train_data['Survived']\n",
+    "\n",
+    "# Chuẩn hóa các đặc trưng trong dữ liệu huấn luyện\n",
+    "scaler = StandardScaler()\n",
+    "X = scaler.fit_transform(X)\n",
+    "\n",
+    "# Tách dữ liệu thành tập huấn luyện và tập kiểm tra\n",
+    "X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)\n",
+    "\n",
+    "# Xử lý giá trị thiếu trong dữ liệu test\n",
+    "test_data['Age'] = test_data['Age'].fillna(test_data['Age'].median())\n",
+    "test_data['Embarked'] = test_data['Embarked'].fillna(test_data['Embarked'].mode()[0])\n",
+    "test_data['Fare'] = test_data['Fare'].fillna(test_data['Fare'].median())\n",
+    "\n",
+    "# Tạo thêm đặc trưng mới trong dữ liệu test\n",
+    "test_data['FamilySize'] = test_data['SibSp'] + test_data['Parch'] + 1\n",
+    "test_data['IsAlone'] = (test_data['FamilySize'] == 1).astype(int)\n",
+    "\n",
+    "# Chuyển đổi các biến phân loại thành số trong dữ liệu test\n",
+    "test_data = pd.get_dummies(test_data, columns=['Sex', 'Embarked'], drop_first=True)\n",
+    "\n",
+    "# Đảm bảo rằng dữ liệu test có cùng các cột với dữ liệu huấn luyện\n",
+    "missing_cols = set(train_data.columns) - set(test_data.columns)\n",
+    "for col in missing_cols:\n",
+    "    test_data[col] = 0\n",
+    "test_data = test_data[train_data.columns.drop(['Survived'])]\n",
+    "\n",
+    "# Chuẩn hóa dữ liệu test\n",
+    "X_test = scaler.transform(test_data.drop(columns=['PassengerId']))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "a65e9e64",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-19T03:57:22.475787Z",
+     "iopub.status.busy": "2025-01-19T03:57:22.475390Z",
+     "iopub.status.idle": "2025-01-19T03:57:22.733960Z",
+     "shell.execute_reply": "2025-01-19T03:57:22.732642Z"
+    },
+    "papermill": {
+     "duration": 0.269763,
+     "end_time": "2025-01-19T03:57:22.735765",
+     "exception": false,
+     "start_time": "2025-01-19T03:57:22.466002",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Logistic Regression Accuracy: 0.7988826815642458\n",
+      "Decision Tree Classifier Accuracy: 0.7821229050279329\n",
+      "Random Forest Classifier Accuracy: 0.8156424581005587\n",
+      "Support Vector Classifier Accuracy: 0.8156424581005587\n",
+      "K-Nearest Neighbors Classifier Accuracy: 0.8100558659217877\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn.tree import DecisionTreeClassifier\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "from sklearn.svm import SVC\n",
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "from sklearn.metrics import accuracy_score\n",
+    "\n",
+    "# Hàm để huấn luyện và đánh giá mô hình\n",
+    "def train_and_evaluate_model(model, model_name):\n",
+    "    model.fit(X_train, y_train)\n",
+    "    y_pred = model.predict(X_val)\n",
+    "    accuracy = accuracy_score(y_val, y_pred)\n",
+    "    print(f\"{model_name} Accuracy: {accuracy}\")\n",
+    "    return model\n",
+    "\n",
+    "# Huấn luyện và đánh giá các mô hình khác nhau\n",
+    "\n",
+    "# Logistic Regression (tăng số lượng vòng lặp tối đa)\n",
+    "logreg = LogisticRegression(max_iter=1000)\n",
+    "logreg_model = train_and_evaluate_model(logreg, \"Logistic Regression\")\n",
+    "\n",
+    "# Decision Tree Classifier\n",
+    "dtree = DecisionTreeClassifier()\n",
+    "dtree_model = train_and_evaluate_model(dtree, \"Decision Tree Classifier\")\n",
+    "\n",
+    "# Random Forest Classifier\n",
+    "rf = RandomForestClassifier()\n",
+    "rf_model = train_and_evaluate_model(rf, \"Random Forest Classifier\")\n",
+    "\n",
+    "# Support Vector Classifier\n",
+    "svc = SVC()\n",
+    "svc_model = train_and_evaluate_model(svc, \"Support Vector Classifier\")\n",
+    "\n",
+    "# K-Nearest Neighbors Classifier\n",
+    "knn = KNeighborsClassifier()\n",
+    "knn_model = train_and_evaluate_model(knn, \"K-Nearest Neighbors Classifier\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "9d62f48f",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-01-19T03:57:22.754680Z",
+     "iopub.status.busy": "2025-01-19T03:57:22.754305Z",
+     "iopub.status.idle": "2025-01-19T03:57:22.814169Z",
+     "shell.execute_reply": "2025-01-19T03:57:22.812979Z"
+    },
+    "papermill": {
+     "duration": 0.071377,
+     "end_time": "2025-01-19T03:57:22.815987",
+     "exception": false,
+     "start_time": "2025-01-19T03:57:22.744610",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Submission file for Logistic_Regression created successfully.\n",
+      "Submission file for Decision_Tree_Classifier created successfully.\n",
+      "Submission file for Random_Forest_Classifier created successfully.\n",
+      "Submission file for Support_Vector_Classifier created successfully.\n",
+      "Submission file for K_Nearest_Neighbors_Classifier created successfully.\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Hàm để tạo file submission từ mô hình đã huấn luyện\n",
+    "def create_submission_file(model, model_name):\n",
+    "    predictions = model.predict(X_test)\n",
+    "    submission = pd.DataFrame({'PassengerId': test_data['PassengerId'], 'Survived': predictions})\n",
+    "    submission.to_csv(f'submission_{model_name}.csv', index=False)\n",
+    "    print(f\"Submission file for {model_name} created successfully.\")\n",
+    "\n",
+    "# Tạo file submission cho từng mô hình\n",
+    "\n",
+    "create_submission_file(logreg_model, \"Logistic_Regression\")\n",
+    "create_submission_file(dtree_model, \"Decision_Tree_Classifier\")\n",
+    "create_submission_file(rf_model, \"Random_Forest_Classifier\")\n",
+    "create_submission_file(svc_model, \"Support_Vector_Classifier\")\n",
+    "create_submission_file(knn_model, \"K_Nearest_Neighbors_Classifier\")"
+   ]
   }
  ],
  "metadata": {
@@ -1523,14 +2034,14 @@
   },
   "papermill": {
    "default_parameters": {},
-   "duration": 38.883213,
-   "end_time": "2025-01-18T12:53:33.748862",
+   "duration": 36.825984,
+   "end_time": "2025-01-19T03:57:23.746171",
    "environment_variables": {},
    "exception": null,
    "input_path": "__notebook__.ipynb",
    "output_path": "__notebook__.ipynb",
    "parameters": {},
-   "start_time": "2025-01-18T12:52:54.865649",
+   "start_time": "2025-01-19T03:56:46.920187",
    "version": "2.6.0"
   }
  },
